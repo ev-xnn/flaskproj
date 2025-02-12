@@ -1,43 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Applicant</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <style>
-        form {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
-        label {
-            display: block;
-            margin: 10px 0 5px;
-            font-weight: bold;
-        }
-        input, select, button {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button {
-            background-color: #6c63ff;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #574bdb;
-        }
-    </style>
-</head>
-<body>
+{% extends "base.html" %}
+{% block head %}
+<h1>Applicants</h1>
+{% endblock %}
+{% block content %}
     <nav>
             <ul>
                 <li><a href="{{ url_for('home') }}" class="active">Home</a></li>
@@ -77,5 +42,4 @@
 
         <button type="submit">Save Changes</button>
     </form>
-</body>
-</html>
+{% endblock %}

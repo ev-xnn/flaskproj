@@ -1,6 +1,8 @@
 {% extends "base.html" %}
+{% block head %}
+<h1>Contracts</h1>
+{% endblock %}
 {% block content %}
-
 <form method="POST">
     <input type="text" name="contract_name" placeholder="Artist Name" required>
     {% if errors.get('username') %}

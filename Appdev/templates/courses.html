@@ -1,34 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Courses</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <style>
-        .course {
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px auto;
-            width: 80%;
-            background-color: #fff;
-        }
-        .course h2 {
-            color: #6c63ff;
-        }
-        .signup-btn {
-            text-decoration: none;
-            padding: 10px 20px;
-            background-color: #6c63ff;
-            color: white;
-            border-radius: 5px;
-        }
-        .signup-btn:hover {
-            background-color: #574bdb;
-        }
-    </style>
-</head>
+{% extends "base.html" %}
+{% block head %}
+<h1>Courses</h1>
+{% endblock %}
+{% block content %}
 <body>
     <header>
     <h1>Find Online Courses by Skills</h1>
@@ -82,4 +56,4 @@
     </div>
 
 </body>
-</html>
+{% endblock %}

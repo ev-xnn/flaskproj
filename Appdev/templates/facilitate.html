@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <!-- Set character encoding and viewport for responsive design -->
-    <meta charset="UTF-8"> <!-- Ensure proper character rendering -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Responsive layout for all devices -->
-    <title>Facilitate Competitions</title> <!-- Page title displayed on the browser tab -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+{% extends "base.html" %}
+{% block head %}
+<h1>Competitions</h1>
+{% endblock %}
+{% block content %}
     <style>
         /* Styling for the body to set font, background gradient, and default margins */
         main {
@@ -106,8 +103,6 @@
             text-decoration: underline; /* Add underline when the link is hovered over */
         }
     </style>
-</head>
-<body>
     <!-- Header section at the top of the page -->
     <header>
         <h1>Facilitate Competitions</h1> <!-- Text displayed in the header -->
@@ -152,5 +147,4 @@
         <a href="/about_competitions" class="about-link">Learn more about our competitions</a> <!-- Link to the about competitions page -->
     </div>
     </main>
-</body>
-</html>
+{% endblock %}
