@@ -1,27 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-</head>
-<body>
-    <header>
-        <h1>Register</h1>
-        <nav>
-            <ul>
-                <li><a href="{{ url_for('home') }}">Home</a></li>
-                <li><a href="{{ url_for('sustainability') }}">Sustainability</a></li>
-                <li><a href="{{url_for('form_audition') }}">Audition</a></li>
-                <li><a href="{{url_for('course_selection') }}">Courses</a></li>
-                <li><a href="{{url_for('competition') }}">Competition</a></li>
-                <li><a href="{{url_for('shop') }}" class="active">Shop</a></li>
-                <li><a href="{{ url_for('login') }}">Login</a></li>
-                <li><a href="{{ url_for('logout') }}">Logout</a></li>
-            </ul>
-        </nav>
-    </header>
+{% extends "base.html" %}
+{% block head %}
+<h1>Register</h1>
+{% endblock %}
+{% block content %}
     <main>
         <h2>Create a New Account</h2>
         <form method="post" action="{{ url_for('register') }}">
@@ -39,8 +20,4 @@
             <button type="submit">Register</button>
         </form>
     </main>
-    <footer>
-        <p>&copy; 2025 Harmonique</p>
-    </footer>
-</body>
-</html>
+{% endblock %}

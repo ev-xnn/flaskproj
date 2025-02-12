@@ -1,21 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Confirmation</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-</head>
-<body>
-    <header>
-        <h1>Thank You for Your Order!</h1>
-        <nav>
-            <ul>
-                <li><a href="{{ url_for('shop') }}">Home</a></li>
-                <li><a href="{{ url_for('logout') }}">Logout</a></li>
-            </ul>
-        </nav>
-    </header>
+{% extends "base.html" %}
+{% block head %}
+<h1>Thank you for the order!</h1>
+{% endblock %}
+{% block content %}
 
     <main>
         <section>
@@ -42,5 +29,4 @@
     <footer>
         <p>&copy; 2025 Your Shop. All rights reserved.</p>
     </footer>
-</body>
-</html>
+{% endblock %}

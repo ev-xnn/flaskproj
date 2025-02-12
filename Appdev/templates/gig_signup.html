@@ -3,23 +3,6 @@
 <h1>Gig Sign Up</h1>
 {% endblock %}
 {% block content %}
-    <!-- Main container for the signup form -->
-    <div class="container">
-        <!-- Main heading of the page -->
-        <h1>Gig Sign Up</h1>
-        <nav>
-            <ul>
-                <li><a href="{{ url_for('home') }}">Home</a></li>
-                <li><a href="{{ url_for('sustainability') }}">Sustainability</a></li>
-                <li><a href="{{url_for('form_audition') }}">Audition</a></li>
-                <li><a href="{{url_for('course_selection') }}">Courses</a></li>
-                <li><a href="{{url_for('competition') }}">Competition</a></li>
-                <li><a href="{{url_for('shop') }}">Shop</a></li>
-                <li><a href="{{url_for('gig') }}" class="active">Gigs</a></li>
-                <li><a href="{{ url_for('login') }}">Login</a></li>
-                <li><a href="{{ url_for('logout') }}">Logout</a></li>
-            </ul>
-        </nav>
         <!-- Form for user input -->
         <form action="{{ url_for('edit_applicant', applicant_id=applicant['id']) if applicant else '/add' }}" method="POST">
             <!-- First Name field -->
@@ -95,5 +78,4 @@
             <!-- Submit button -->
             <button type="submit">Register</button>
         </form>
-    </div>
 {% endblock %}

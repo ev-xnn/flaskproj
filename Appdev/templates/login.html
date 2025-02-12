@@ -1,28 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="/static/Styles.css">
-</head>
-<body>
-    <header>
-        <h1>Harmonique Login</h1>
-        <nav>
-            <ul>
-                <li><a href="{{ url_for('home') }}">Home</a></li>
-                <li><a href="{{ url_for('sustainability') }}">Sustainability</a></li>
-                <li><a href="{{url_for('form_audition') }}" class="active">Audition</a></li>
-                <li><a href="{{url_for('course_selection') }}">Courses</a></li>
-                <li><a href="{{url_for('competition') }}">Competition</a></li>
-                <li><a href="{{url_for('shop') }}">Shop</a></li>
-                <li><a href="{{ url_for('login') }}" class="active">Login</a></li>
-                <li><a href="{{ url_for('logout') }}">Logout</a></li>
-            </ul>
-        </nav>
-    </header>
-
+{% extends "base.html" %}
+{% block head %}
+<h1>Login</h1>
+{% endblock %}
+{% block content %}
     <main>
         <div class="login-container">
             <h1>Login</h1>
@@ -36,9 +16,4 @@
             <p>Don't have an account? <a href="/register">Register here</a></p>
         </div>
     </main>
-
-    <footer>
-    <p>&copy; 2024 Harmonique. All Rights Reserved.</p>
-</footer>
-</body>
-</html>
+{% endblock %}
