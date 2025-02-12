@@ -1,28 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cart</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-</head>
-<body>
-    <header>
-        <h1>Your Cart</h1>
-        <nav>
-            <ul>
-                <li><a href="{{ url_for('home') }}" class="active">Home</a></li>
-                <li><a href="{{ url_for('sustainability') }}">Sustainability</a></li>
-                <li><a href="{{url_for('form_audition') }}">Audition</a></li>
-                <li><a href="{{url_for('course_selection') }}">Courses</a></li>
-                <li><a href="{{url_for('competition') }}">Competition</a></li>
-                <li><a href="{{url_for('shop') }}">Shop</a></li>
-                <li><a href="{{ url_for('login') }}">Login</a></li>
-                <li><a href="{{ url_for('logout') }}">Logout</a></li>
-            </ul>
-        </nav>
-        </nav>
-    </header>
+{% extends "base.html" %}
+{% block head %}
+<h1>Cart</h1>
+{% endblock %}
+{% block content %}
 
     <main>
         <h1>Your Cart</h1>
@@ -58,9 +38,4 @@
             </form>
         </div>
     </main>
-
-    <footer>
-        <p>&copy; 2025 Harmonique Shop. All rights reserved.</p>
-    </footer>
-</body>
-</html>
+{% endblock %}

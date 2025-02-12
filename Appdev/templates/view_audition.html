@@ -1,44 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Applicants</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <style>
-        table {
-            width: 90%;
-            margin: 0 auto;
-            border-collapse: collapse;
-            background-color: white;
-        }
-        th, td {
-            padding: 15px;
-            text-align: left;
-            border: 1px solid #ddd;
-        }
-        th {
-            background-color: #007BFF;
-            color: white;
-        }
-        a {
-            text-decoration: none;
-            padding: 8px 12px;
-            border-radius: 5px;
-            margin-right: 5px;
-        }
-        .edit {
-            background-color: #28a745;
-            color: white;
-        }
-        .delete {
-            background-color: #dc3545;
-            color: white;
-        }
-    </style>
-</head>
-<body>
-    <h1>Applicants</h1>
+{% extends "base.html" %}
+{% block head %}
+<h1>View Applicants</h1>
+{% endblock %}
+{% block content %}
     <table>
         <thead>
             <tr>
@@ -74,5 +38,4 @@
             {% endfor %}
         </tbody>
     </table>
-</body>
-</html>
+{% endblock %}

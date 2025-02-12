@@ -1,59 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <style>
-        form {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background: black;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
-        label {
-            display: block;
-            margin: 10px 0 5px;
-            font-weight: bold;
-        }
-        input, select, button {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box; /* Ensures uniform width including padding and border */
-        }
-        button {
-            background-color: #6c63ff;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #574bdb;
-        }
-    </style>
-</head>
-<body>
-<header>
-    <h1>Sign Up for a Course</h1>
-    <nav>
-            <ul>
-                <li><a href="{{ url_for('home') }}" class="active">Home</a></li>
-                <li><a href="{{ url_for('sustainability') }}">Sustainability</a></li>
-                <li><a href="{{url_for('form_audition') }}">Audition</a></li>
-                <li><a href="{{url_for('course_selection') }}">Courses</a></li>
-                <li><a href="{{url_for('competition') }}">Competition</a></li>
-                <li><a href="{{url_for('shop') }}">Shop</a></li>
-                <li><a href="{{ url_for('login') }}">Login</a></li>
-                <li><a href="{{ url_for('logout') }}">Logout</a></li>
-            </ul>
-        </nav>
-</header>
+{% extends "base.html" %}
+{% block head %}
+<h1>Sign up for a Course</h1>
+{% endblock %}
+{% block content %}
     <form action="/signup" method="POST">
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" required>
@@ -84,5 +33,4 @@
 
         <button type="submit">Submit</button>
     </form>
-</body>
-</html>
+{% endblock %}
