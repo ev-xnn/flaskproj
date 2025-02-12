@@ -119,7 +119,7 @@ def delete_audition(applicant_id):
 
 def init_db(): #creates a db that looks like {'products': [], 'cart': [], 'users': {user: {'password': password, 'role': role}}}
 
-    with shelve.open('shop_data') as db:
+    with shelve.open('shop_data.db') as db:
         if 'products' not in db:
             db['products'] = []
         if 'cart' not in db:
@@ -141,7 +141,7 @@ def sustainability():
 
 @app.route('/shop')
 def shop():
-    with shelve.open('shop_data') as db:
+    with shelve.open('shop_data.db') as db:
         products = db['products'] #opens the db and assigns products stored in the db as products
     return render_template('shop.html', products=products)
 
@@ -151,7 +151,7 @@ def forgot_password():
     if request.method == 'POST':
         username = request.form.get('username')
 
-        with shelve.open('shop_data') as db:
+        with shelve.open('shop_data.db') as db:
             users = db.get('users', {})
             user = users.get(username)
 
@@ -182,7 +182,7 @@ def verify_otp(username):
         otp = request.form.get('otp')
         new_password = request.form.get('new_password')
 
-        with shelve.open('shop_data') as db:
+        with shelve.open('shop_data.db') as db:
             users = db.get('users', {})
             user = users.get(username)
 
@@ -208,7 +208,7 @@ def login():
         password = request.form.get('password') #gets password
 
         # Open the Shelve database to access users
-        with shelve.open('shop_data') as db:
+        with shelve.open('shop_data.db') as db:
             users = db.get('users', {}) #assigns the users db to the variable users
             user = users.get(username)  # Look for the user in the database
             if user and user['password'] == password:
@@ -234,7 +234,7 @@ def add_to_cart():
     product_id = int(request.form.get('product_id')) #finds the product id of the submitted form and converts it into an integer
     quantity = int(request.form.get('quantity', 1)) #finds the quantity of the products added and converts it into an integer
 
-    with shelve.open('shop_data') as db:
+    with shelve.open('shop_data.db') as db:
         products = db['products']
         cart = db['cart']
         product = next((p for p in products if p['id'] == product_id), None) #next() returns the first matching product or None if there is nothing found and checks if the id matches the product id
@@ -254,7 +254,7 @@ def add_to_cart():
 
 @app.route('/cart')
 def view_cart():
-    with shelve.open('shop_data') as db:
+    with shelve.open('shop_data.db') as db:
         products = db['products']
         cart = db['cart']
         cart_details = []
@@ -279,7 +279,7 @@ def view_cart():
 def checkout():
     errors = {}
     if request.method == 'POST':
-        with shelve.open('shop_data') as db:
+        with shelve.open('shop_data.db') as db:
             cart = db.get('cart', [])
 
             name = request.form.get('name')
@@ -340,7 +340,7 @@ def update_cart():
     product_id = int(request.form.get('product_id'))
     quantity = int(request.form.get('quantity'))
 
-    with shelve.open('shop_data') as db:
+    with shelve.open('shop_data.db') as db:
         cart = db['cart']
         for item in cart:
             if item['product_id'] == product_id:
@@ -354,7 +354,7 @@ def update_cart():
 def delete_from_cart():
     product_id = int(request.form.get('product_id'))
 
-    with shelve.open('shop_data') as db:
+    with shelve.open('shop_data.db') as db:
         cart = db['cart']
         cart = [item for item in cart if item['product_id'] != product_id]
         db['cart'] = cart
@@ -366,7 +366,7 @@ def staff():
     if 'username' not in session or session['role'] != 'admin':
         return redirect(url_for('login'))
 
-    with shelve.open('shop_data') as db:
+    with shelve.open('shop_data.db') as db:
         products = db['products']
 
         if request.method == 'POST':
@@ -396,7 +396,7 @@ def update_product():
     product_price = float(request.form.get('product_price'))
     product_image = request.form.get('product_image')
 
-    with shelve.open('shop_data') as db:
+    with shelve.open('shop_data.db') as db:
         products = db['products']
         for product in products:
             if product['id'] == product_id:
@@ -412,7 +412,7 @@ def update_product():
 def delete_product():
     product_id = int(request.form.get('product_id'))
 
-    with shelve.open('shop_data') as db:
+    with shelve.open('shop_data.db') as db:
         products = db['products']
         products = [product for product in products if product['id'] != product_id]
         db['products'] = products
@@ -424,7 +424,7 @@ def details():
     if 'username' not in session or session.get('role') != 'admin':
         flash("Access denied. Admins only.", "error")
         return redirect(url_for('login'))
-    with shelve.open('shop_data') as db:
+    with shelve.open('shop_data.db') as db:
         users = db['users']
         if request.method == 'POST':
             action = request.form.get('action')
@@ -465,7 +465,7 @@ def register():
             errors['password'] = 'Password needs to be at least 8 characters.'
         if errors:
             return render_template('register.html', errors=errors)
-        with shelve.open('shop_data') as db:
+        with shelve.open('shop_data.db') as db:
             users = db['users']
             if request.form['username'] in users:
                 return "User already exists!"
