@@ -373,12 +373,14 @@ def staff():
             product_name = request.form.get('product_name')
             product_price = round(float(request.form.get('product_price')))
             product_image = request.form.get('product_image')
+            product_description = request.form.get('product_description')
 
             new_product = {
                 "id": len(products) + 1,
                 "name": product_name,
                 "price": product_price,
-                "image": product_image
+                "image": product_image,
+                "description": product_description
             }
             products.append(new_product)
             db['products'] = products
