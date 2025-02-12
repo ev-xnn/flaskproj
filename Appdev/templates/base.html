@@ -14,30 +14,23 @@
         <nav class="navbar navbar-expand-sm">
             <div>
                 <ul class="nav nav-pills">
-                    <li class="active">
-                        <a href="{{ url_for('home') }}">Home</a>
-                    </li>
-                    <li>
-                        <a href="{{ url_for('sustainability') }}">Sustainability</a>
-                    </li>
-                    <li>
-                        <a href="{{url_for('form_audition') }}">Audition</a>
-                    </li>
-                    <li>
-                        <a href="{{url_for('course_selection') }}">Courses</a>
-                    </li>
-                    <li>
-                        <a href="{{url_for('competition') }}">Competition</a>
-                    </li>
-                    <li>
-                        <a href="{{url_for('shop') }}">Shop</a>
-                    </li>
-                    <li >
-                        <a href="{{ url_for('login') }}">Login</a>
-                    </li>
-                    <li>
-                        <a href="{{ url_for('logout') }}">Logout</a>
-                    </li>
+                    <li><a href="{{ url_for('home') }}">Home</a></li>
+                    <li><a href="{{ url_for('sustainability') }}">Sustainability</a></li>
+                    <li><a href="{{url_for('form_audition') }}">Audition</a></li>
+                    <li><a href="{{url_for('course_selection') }}">Courses</a></li>
+                    <li><a href="{{url_for('competition') }}">Competition</a></li>
+                    <li><a href="{{url_for('shop') }}">Shop</a></li>
+                    {% if session['role'] == 'admin' %}
+                    <li><a href="{{url_for('view_audition') }}">View Audition</a></li>
+                    <li><a href="{{ url_for('view_applicants_courses') }}">View Course</a></li>
+                    <li><a href="{{url_for('artist_contract') }}">Contract</a></li>
+                    <li><a href="{{url_for('live_calendar') }}">Calendar</a></li>
+                    {% endif %}
+                    {% if user not in session %}
+                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                    {% else %}
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                    {% endif %}
                 </ul>
             </div>
         </nav>

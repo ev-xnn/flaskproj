@@ -214,7 +214,7 @@ def login():
             if user and user['password'] == password:
                 session['username'] = username
                 session['role'] = user['role']  # Save the user's role in the session
-                return redirect(url_for('staff') if user['role'] == 'admin' else url_for('shop')) #redirects to staff page if the role is admin, else redirect to the shop
+                return redirect(url_for('home'))
 
         return render_template('login.html', error="Invalid username or password", errors={})
 
@@ -225,7 +225,7 @@ def login():
 def logout():
     session.clear()
     flash("You have been logged out.", "success")
-    return redirect(url_for('/'))
+    return redirect(url_for('home'))
 
 
 
