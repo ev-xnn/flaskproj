@@ -3,22 +3,6 @@
 <h1>Courses</h1>
 {% endblock %}
 {% block content %}
-<body>
-    <header>
-    <h1>Find Online Courses by Skills</h1>
-    <nav>
-            <ul>
-                <li><a href="{{ url_for('home') }}">Home</a></li>
-                <li><a href="{{ url_for('sustainability') }}">Sustainability</a></li>
-                <li><a href="{{url_for('form_audition') }}">Audition</a></li>
-                <li><a href="{{url_for('course_selection') }}" class="active">Courses</a></li>
-                <li><a href="{{url_for('competition') }}">Competition</a></li>
-                <li><a href="{{url_for('shop') }}">Shop</a></li>
-                <li><a href="{{ url_for('login') }}">Login</a></li>
-                <li><a href="{{ url_for('logout') }}">Logout</a></li>
-            </ul>
-        </nav>
-        </header>
     <div class="course">
         <h2>Dancing</h2>
         <p>Express emotions through movement and music.</p>
@@ -54,6 +38,4 @@
         <p>Learn how to connect with audiences and build trust as an artist.</p>
         <a class="signup-btn" href="/signup">Sign Up</a>
     </div>
-
-</body>
 {% endblock %}
