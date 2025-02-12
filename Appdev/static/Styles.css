@@ -75,6 +75,11 @@ main {
 }
 
 /* Carousel */
+.carousel-item {
+    transition: transform 0.25s ease-in-out !important;
+}
+
+
 .carousel-item img {
     width: 100%;
     height: 600px;
@@ -95,6 +100,12 @@ main {
 .carousel-caption p {
     font-size: 1.2rem;
     color: #ddd;
+}
+
+.carousel-control-prev, .carousel-control-next{
+    background-color: transparent;
+    border: none;
+    filter: none;
 }
 
 
