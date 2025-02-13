@@ -369,7 +369,7 @@ def staff():
     with shelve.open('shop_data.db') as db:
         products = db['products']
         users = db['users']
-        if request.method == 'POST':
+        if request.method == 'POST' and request.form.get('action') == 'add-product':
             product_name = request.form.get('product_name')
             product_price = round(float(request.form.get('product_price')))
             product_image = request.form.get('product_image')
@@ -386,32 +386,32 @@ def staff():
             db['products'] = products
 
 
-            if request.method == 'POST':
-                action = request.form.get('action')
-                username = request.form.get('username')
+        if request.method == 'POST':
+            action = request.form.get('action')
+            username = request.form.get('username')
 
-                if action == 'create':
-                    password = request.form.get('password')
-                    role = request.form.get('role')
-                    if username not in users:
-                        users[username] = {"password": password, "role": role}
-                    else:
-                        return "User already exists!"
+            if action == 'create-user':
+                password = request.form.get('password')
+                role = request.form.get('role')
+                if username not in users:
+                    users[username] = {"password": password, "role": role}
+                else:
+                    return "User already exists!"
 
-                elif action == 'update':
-                    if username in users:
-                        users[username]['password'] = request.form.get('password', users[username]['password'])
-                        users[username]['role'] = request.form.get('role', users[username]['role'])
-                    else:
-                        return "User not found!"
+            elif action == 'update-user':
+                if username in users:
+                    users[username]['password'] = request.form.get('password', users[username]['password'])
+                    users[username]['role'] = request.form.get('role', users[username]['role'])
+                else:
+                    return "User not found!"
 
-                elif action == 'delete':
-                    if username in users:
-                        del users[username]
-                    else:
-                        return "User not found!"
+            elif action == 'delete-user':
+                if username in users:
+                    del users[username]
+                else:
+                    return "User not found!"
 
-                db['users'] = users
+            db['users'] = users
 
     return render_template('staff.html', products=products, users=users)
 
@@ -419,31 +419,34 @@ def staff():
 
 @app.route('/update-product', methods=['POST'])
 def update_product():
-    product_id = int(request.form.get('product_id'))
-    product_name = request.form.get('product_name')
-    product_price = float(request.form.get('product_price'))
-    product_image = request.form.get('product_image')
+    if request.form.get('action') == 'update-product':
 
-    with shelve.open('shop_data.db') as db:
-        products = db['products']
-        for product in products:
-            if product['id'] == product_id:
-                product['name'] = product_name
-                product['price'] = product_price
-                product['image'] = product_image
-                break
-        db['products'] = products
+        product_id = int(request.form.get('product_id'))
+        product_name = request.form.get('product_name')
+        product_price = float(request.form.get('product_price'))
+        product_image = request.form.get('product_image')
+
+        with shelve.open('shop_data.db') as db:
+            products = db['products']
+            for product in products:
+                if product['id'] == product_id:
+                    product['name'] = product_name
+                    product['price'] = product_price
+                    product['image'] = product_image
+                    break
+            db['products'] = products
     return redirect(url_for('staff'))
 
 
 @app.route('/delete-product', methods=['POST'])
 def delete_product():
-    product_id = int(request.form.get('product_id'))
+    if request.form.get('action') == 'delete-product':
+        product_id = int(request.form.get('product_id'))
 
-    with shelve.open('shop_data.db') as db:
-        products = db['products']
-        products = [product for product in products if product['id'] != product_id]
-        db['products'] = products
+        with shelve.open('shop_data.db') as db:
+            products = db['products']
+            products = [product for product in products if product['id'] != product_id]
+            db['products'] = products
     return redirect(url_for('staff'))
 
 

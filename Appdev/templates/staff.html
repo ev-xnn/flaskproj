@@ -6,7 +6,7 @@
 
     <main>
         <h2>Edit, Delete, or Update Account Details</h2>
-        <table>
+        <table class="table table-striped table-bordered">
             <thead>
                 <tr>
                     <th>Username</th>
@@ -22,20 +22,34 @@
                     <td>{{ details['password'] }}</td>
                     <td>{{ details['role'] }}</td>
                     <td>
+                        <div class="d-flex gap-2">
                         <!-- Update form -->
-                        <form method="post" style="display: inline-block;">
-                            <input type="hidden" name="action" value="update">
-                            <input type="hidden" name="username" value="{{ username }}">
-                            <input type="text" name="password" placeholder="New Password">
-                            <input type="text" name="role" placeholder="New Role">
-                            <button type="submit">Update</button>
+                        <form method="post">
+                            <div class="row">
+                                <div class="col md-4">
+                                <input class="form-control" type="hidden" name="action" value="update-user">
+                                </div>
+                                <div class="col">
+                                <input class="form-control" type="hidden" name="username" value="{{ username }}">
+                                </div>
+                                <div class="col">
+                                <input class="form-control" style="width:150px" type="text" name="password" placeholder="New Password">
+                                </div>
+                                <div class="col">
+                                <input class="form-control" style="width:150px" type="text" name="role" placeholder="New Role">
+                                </div>
+                                <div class="col">
+                                <button class="btn btn-primary me-2" type="submit">Update</button>
+                                </div>
+                            </div>
                         </form>
                         <!-- Delete form -->
-                        <form method="post" style="display: inline-block;">
-                            <input type="hidden" name="action" value="delete">
+                        <form method="post">
+                            <input type="hidden" name="action" value="delete-user">
                             <input type="hidden" name="username" value="{{ username }}">
-                            <button type="submit">Delete</button>
+                            <button class="btn btn-danger" type="submit">Delete</button>
                         </form>
+                        </div>
                     </td>
                 </tr>
                 {% endfor %}
@@ -43,24 +57,52 @@
         </table>
 
         <!-- Create user form -->
-        <h3>Create New User</h3>
+        <h3 style="text-align:center">Create New User</h3>
         <form method="post">
-            <input type="hidden" name="action" value="create">
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="text" name="password" placeholder="Password" required>
-            <input type="text" name="role" placeholder="Role" required>
-            <button type="submit">Create</button>
-        </form>
-        <h2>Add New Product</h2>
-        <form action="/staff" method="POST">
-            <input type="text" name="product_name" placeholder="Product Name" required>
-            <input type="number" step="0.01" name="product_price" placeholder="Price" required>
-            <input type="text" name="product_image" placeholder="Image URL" required>
-            <input type="text" name="product_description" placeholder="Description" required>
-            <button type="submit">Add Product</button>
+            <div class="row">
+                <div class="col">
+                <input class="form-control" type="hidden" name="action" value="create-user">
+                </div>
+                <div class="col">
+                <input class="form-control" type="text" name="username" placeholder="Username" required>
+                </div>
+                <div class="col">
+                <input class="form-control" type="text" name="password" placeholder="Password" required>
+                </div>
+                <div class="col">
+                <input class="form-control" type="text" name="role" placeholder="Role" required>
+                </div>
+                <div class="col">
+                <button class="btn btn-primary" type="submit">Create</button>
+                </div>
+            </div>
         </form>
 
-        <h2>Manage Products</h2>
+        <h3 style="text-align:center padding:1.2rem">Add New Product</h3>
+        <form action="/staff" method="POST">
+            <div class="row">
+                <div class="col">
+                <input type="hidden" name="action" value="add-product">
+                </div>
+                <div class="col">
+                <input class="form-control" type="text" name="product_name" placeholder="Product Name" required>
+                </div>
+                <div class="col">
+                <input class="form-control" type="number" step="0.01" name="product_price" placeholder="Price" required>
+                </div>
+                <div class="col">
+                <input class="form-control" type="text" name="product_image" placeholder="Image URL" required>
+                </div>
+                <div class="col">
+                <input class="form-control" type="text" name="product_description" placeholder="Description" required>
+                </div>
+                <div class="col">
+                <button class="btn btn-primary" type="submit">Add Product</button>
+                </div>
+            </div>
+        </form>
+
+        <h3 style="text-align:center padding:1.2rem">Manage Products</h3>
         <div class="products">
             {% for product in products %}
             <div class="product">
@@ -68,16 +110,34 @@
                 <h3>{{ product['name'] }}</h3>
                 <p>Price: ${{ product['price'] }}</p>
                 <form action="/update-product" method="POST" style="margin-bottom: 5px;">
-                    <input type="hidden" name="product_id" value="{{ product['id'] }}">
-                    <input type="text" name="product_name" value="{{ product['name'] }}" required>
-                    <input type="number" step="0.01" name="product_price" value="{{ product['price'] }}" required>
-                    <input type="text" name="product_description" value="{{ product['description'] }}" required>
-                    <input type="text" name="product_image" value="{{ product['image'] }}" required>
-                    <button type="submit">Update</button>
+                    <div class="row">
+                        <div class="col">
+                    <input type="hidden" name="action" value="update-product">
+                        </div>
+                        <div class="col">
+                        <input type="hidden" name="product_id" value="{{ product['id'] }}">
+                        </div>
+                        <div class="col">
+                        <input type="text" name="product_name" value="{{ product['name'] }}" required>
+                        </div>
+                        <div class="col">
+                        <input type="number" step="0.01" name="product_price" value="{{ product['price'] }}" required>
+                        </div>
+                        <div class="col">
+                        <input type="text" name="product_description" value="{{ product['description'] }}" required>
+                        </div>
+                        <div class="col">
+                        <input type="text" name="product_image" value="{{ product['image'] }}" required>
+                        </div>
+                        <div class="col">
+                        <button class="btn btn-primary" type="submit">Update</button>
+                        </div>
+                    </div>
                 </form>
                 <form action="/delete-product" method="POST">
+                    <input type="hidden" name="action" value="delete-product">
                     <input type="hidden" name="product_id" value="{{ product['id'] }}">
-                    <button type="submit">Delete</button>
+                    <button class="btn btn-danger" type="submit">Delete</button>
                 </form>
             </div>
             {% endfor %}
