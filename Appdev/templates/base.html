@@ -28,7 +28,7 @@
                     <li><a href="{{url_for('artist_contract') }}">Contract</a></li>
                     <li><a href="{{url_for('live_calendar') }}">Calendar</a></li>
                     {% endif %}
-                    {% if not session['user'] %}
+                    {% if not session['username'] %}
                     <li><a href="{{ url_for('login') }}">Login</a></li>
                     {% else %}
                     <li><a href="{{ url_for('logout') }}">Logout</a></li>
