@@ -368,7 +368,7 @@ def staff():
 
     with shelve.open('shop_data.db') as db:
         products = db['products']
-
+        users = db['users']
         if request.method == 'POST':
             product_name = request.form.get('product_name')
             product_price = round(float(request.form.get('product_price')))
@@ -385,7 +385,35 @@ def staff():
             products.append(new_product)
             db['products'] = products
 
-    return render_template('staff.html', products=products)
+
+            if request.method == 'POST':
+                action = request.form.get('action')
+                username = request.form.get('username')
+
+                if action == 'create':
+                    password = request.form.get('password')
+                    role = request.form.get('role')
+                    if username not in users:
+                        users[username] = {"password": password, "role": role}
+                    else:
+                        return "User already exists!"
+
+                elif action == 'update':
+                    if username in users:
+                        users[username]['password'] = request.form.get('password', users[username]['password'])
+                        users[username]['role'] = request.form.get('role', users[username]['role'])
+                    else:
+                        return "User not found!"
+
+                elif action == 'delete':
+                    if username in users:
+                        del users[username]
+                    else:
+                        return "User not found!"
+
+                db['users'] = users
+
+    return render_template('staff.html', products=products, users=users)
 
 
 

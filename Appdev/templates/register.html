@@ -5,19 +5,21 @@
 {% block content %}
     <main>
         <h2>Create a New Account</h2>
+        <div class="card">
         <form method="post" action="{{ url_for('register') }}">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" placeholder="Enter your username" required>
+            <label class="form-label" for="username">Username:</label>
+            <input class="form-control" type="text" id="username" name="username" placeholder="Enter your username" required>
                 {% if errors.get('username') %}
                 <p class="error-message">{{ errors['username'] }}</p>
                 {% endif %}
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            <label class="form-label" for="password">Password:</label>
+            <input class="form-control" type="password" id="password" name="password" placeholder="Enter your password" required>
                 {% if errors.get('password') %}
                 <p class="error-message">{{ errors['password'] }}</p>
                 {% endif %}
 
-            <button type="submit">Register</button>
+            <button class="btn btn-primary" type="submit">Register</button>
         </form>
+        </div>
     </main>
 {% endblock %}
