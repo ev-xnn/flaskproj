@@ -26,7 +26,7 @@
                         <!-- Update form -->
                         <form method="post">
                             <div class="row">
-                                <div class="col md-4">
+                                <div class="col">
                                 <input class="form-control" type="hidden" name="action" value="update-user">
                                 </div>
                                 <div class="col">
@@ -77,74 +77,75 @@
                 </div>
             </div>
         </form>
-
-        <h3 style="text-align:center padding:1.2rem">Add New Product</h3>
+        <hr>
+        <h3 style="text-align:center">Add New Product</h3>
         <form action="/staff" method="POST">
             <div class="row">
                 <div class="col">
                 <input type="hidden" name="action" value="add-product">
                 </div>
                 <div class="col">
-                <input class="form-control" type="text" name="product_name" placeholder="Product Name" required>
+                <input class="form-control" type="text" name="product_name" style="width:150px" placeholder="Product Name" required>
                 </div>
                 <div class="col">
-                <input class="form-control" type="number" step="0.01" name="product_price" placeholder="Price" required>
+                <input class="form-control" type="number" step="0.01" name="product_price" style="width:100px" placeholder="Price" required>
                 </div>
                 <div class="col">
-                <input class="form-control" type="text" name="product_image" placeholder="Image URL" required>
+                <input class="form-control" type="text" name="product_image" style="width:150px" placeholder="Image URL" required>
                 </div>
                 <div class="col">
-                <input class="form-control" type="text" name="product_description" placeholder="Description" required>
+                <textarea class="form-control" rows="5" style="width:300px" name="product_description"></textarea>
                 </div>
                 <div class="col">
                 <button class="btn btn-primary" type="submit">Add Product</button>
                 </div>
             </div>
         </form>
+        <hr>
+        <h3 style="text-align:center">Manage Products</h3>
+<div class="container">
+    <div class="row">
+        {% for product in products %}
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 d-flex align-items-stretch staff-prod">
+            <div class="card p-3 text-center bg-dark text-light shadow-lg border-0 d-flex flex-column w-100">
+                <img src="{{ product['image'] }}" alt="{{ product['name'] }}"
+                     class="img-fluid rounded object-fit-cover"
+                     style="height: 250px; width: 100%;">
 
-        <h3 style="text-align:center padding:1.2rem">Manage Products</h3>
-        <div class="products">
-            {% for product in products %}
-            <div class="product">
-                <img src="{{ product['image'] }}" alt="{{ product['name'] }}">
-                <h3>{{ product['name'] }}</h3>
-                <p>Price: ${{ product['price'] }}</p>
-                <form action="/update-product" method="POST" style="margin-bottom: 5px;">
-                    <div class="row">
-                        <div class="col">
+                <h3 class="text-primary mt-3">{{ product['name'] }}</h3>
+                <p class="text-light">Price: ${{ product['price'] }}</p>
+
+                <!-- Update Form -->
+                <form action="/update-product" method="POST">
                     <input type="hidden" name="action" value="update-product">
-                        </div>
-                        <div class="col">
-                        <input type="hidden" name="product_id" value="{{ product['id'] }}">
-                        </div>
-                        <div class="col">
-                        <input type="text" name="product_name" value="{{ product['name'] }}" required>
-                        </div>
-                        <div class="col">
-                        <input type="number" step="0.01" name="product_price" value="{{ product['price'] }}" required>
-                        </div>
-                        <div class="col">
-                        <input type="text" name="product_description" value="{{ product['description'] }}" required>
-                        </div>
-                        <div class="col">
-                        <input type="text" name="product_image" value="{{ product['image'] }}" required>
-                        </div>
-                        <div class="col">
-                        <button class="btn btn-primary" type="submit">Update</button>
-                        </div>
+                    <input type="hidden" name="product_id" value="{{ product['id'] }}">
+
+                    <div class="flex-grow-1">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" rows="3" name="product_description"
+                                  style="resize: none; height: 80px;">{{ product['description'] or '' }}</textarea>
                     </div>
+
+                    <label class="form-label mt-2">Image URL</label>
+                    <input class="form-control mb-2" type="text" name="product_image" value="{{ product['image'] }}" required>
+
+                    <button class="btn btn-primary w-100 mt-2" type="submit">Update</button>
                 </form>
+
+                <!-- Delete Form -->
                 <form action="/delete-product" method="POST">
                     <input type="hidden" name="action" value="delete-product">
                     <input type="hidden" name="product_id" value="{{ product['id'] }}">
-                    <button class="btn btn-danger" type="submit">Delete</button>
+                    <button class="btn btn-danger w-100 mt-2" type="submit">Delete</button>
                 </form>
-            </div>
-            {% endfor %}
-        </div>
-    </main>
 
-    <footer>
-        <p>&copy; 2025 Harmonique. All rights reserved.</p>
-    </footer>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+
+    </main>
 {% endblock %}

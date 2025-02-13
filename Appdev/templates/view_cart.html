@@ -1,41 +1,75 @@
 {% extends "base.html" %}
 {% block head %}
-<h1>Cart</h1>
+<h1 class="text-center mt-4">Your Cart</h1>
 {% endblock %}
 {% block content %}
 
-    <main>
-        <h1>Your Cart</h1>
-        <div class="cart-items">
-            {% for item in cart %}
-            <div class="cart-item">
-                <img src="{{ item['image'] }}" alt="{{ item['name'] }}">
-                <div class="cart-details">
-                    <h3>{{ item['name'] }}</h3>
-                    <p>Price: ${{ item['price'] }}</p>
-                    <p>Quantity: {{ item['quantity'] }}</p>
-                    <p>Total: ${{ item['total'] }}</p>
+<main class="container py-4">
+    <div class="row">
+        <!-- Cart Items Section -->
+        <div class="col-md-8">
+            {% if cart %}
+                <div class="list-group">
+                    {% for item in cart %}
+                        <div class="list-group-item card-bg d-flex justify-content-between align-items-center py-3">
+                            <div class="d-flex align-items-center">
+                                <img src="{{ item['image'] }}" alt="{{ item['name'] }}" class="rounded me-3" style="width: 80px; height: 80px; object-fit: cover;">
+                                <div>
+                                    <h5 class="mb-1">{{ item['name'] }}</h5>
+                                    <p class="mb-1">Price: ${{ item['price'] }}</p>
+                                    <p class="mb-1">Total: ${{ item['total'] }}</p>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-3">
+                                <!-- Update Quantity Form -->
+                                <form action="/update-cart" method="POST" class="d-flex align-items-center">
+                                    <input type="hidden" name="product_id" value="{{ item['product_id'] }}">
+                                    <input type="number" name="quantity" value="{{ item['quantity'] }}" min="1" class="form-control form-control-sm bg-dark text-light border-secondary me-2" style="width: 60px;">
+                                    <button class="btn btn-sm btn-primary">Update</button>
+                                </form>
+
+                                <!-- Remove Item Form -->
+                                <form action="/delete-from-cart" method="POST">
+                                    <input type="hidden" name="product_id" value="{{ item['product_id'] }}">
+                                    <button class="btn btn-sm btn-danger">Remove</button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
-                <div class="cart-actions">
-                    <form action="/update-cart" method="POST" style="margin-bottom: 5px;">
-                        <input type="hidden" name="product_id" value="{{ item['product_id'] }}">
-                        <input type="number" name="quantity" value="{{ item['quantity'] }}" min="1" required>
-                        <button type="submit">Update</button>
-                    </form>
-                    <form action="/delete-from-cart" method="POST">
-                        <input type="hidden" name="product_id" value="{{ item['product_id'] }}">
-                        <button type="submit">Remove</button>
+            {% else %}
+                <div class="alert alert-warning text-center">Your cart is empty.</div>
+            {% endif %}
+        </div>
+
+        <!-- Order Summary Section -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title text-center">Order Summary</h4>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <span>Subtotal:</span>
+                        <strong>${{ total }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between text-success">
+                        <span>Discount:</span>
+                        <strong>$0.00</strong>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <span><strong>Total:</strong></span>
+                        <strong>${{ total }}</strong>
+                    </div>
+                    <hr>
+                    <!-- Checkout Button -->
+                    <form action="/checkout" method="POST">
+                        <button class="btn btn-lg btn-primary w-100">Proceed to Checkout</button>
                     </form>
                 </div>
             </div>
-            {% endfor %}
         </div>
-        <h2>Total: ${{ total }}</h2>
+    </div>
+</main>
 
-        <div class="checkout">
-            <form action="/checkout" method="POST">
-                <button type="submit">Proceed to Checkout</button>
-            </form>
-        </div>
-    </main>
 {% endblock %}

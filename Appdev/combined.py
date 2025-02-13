@@ -425,6 +425,7 @@ def update_product():
         product_name = request.form.get('product_name')
         product_price = float(request.form.get('product_price'))
         product_image = request.form.get('product_image')
+        product_description = request.form.get('product_description')
 
         with shelve.open('shop_data.db') as db:
             products = db['products']
@@ -433,6 +434,7 @@ def update_product():
                     product['name'] = product_name
                     product['price'] = product_price
                     product['image'] = product_image
+                    product['description'] = product_description
                     break
             db['products'] = products
     return redirect(url_for('staff'))
@@ -443,11 +445,22 @@ def delete_product():
     if request.form.get('action') == 'delete-product':
         product_id = int(request.form.get('product_id'))
 
-        with shelve.open('shop_data.db') as db:
+        with shelve.open('shop_data.db', writeback=True) as db:
+            if 'products' not in db:
+                db['products'] = []
+                return redirect(url_for('staff'))
+
             products = db['products']
-            products = [product for product in products if product['id'] != product_id]
-            db['products'] = products
+            product_exists = any(product['id'] == product_id for product in products)
+
+            if not product_exists:
+                return redirect(url_for('staff'))
+
+            updated_products = [product for product in products if product['id'] != product_id]
+            db['products'] = updated_products
+
     return redirect(url_for('staff'))
+
 
 
 @app.route('/details', methods=['GET', 'POST'])

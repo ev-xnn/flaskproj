@@ -12,10 +12,16 @@
                 <h3>{{ product['name'] }}</h3>
                 <p>{{ product['description'] }}</p>
                 <p>Price: ${{ product['price'] }}</p>
-                <form class="add-to-cart-form" method="POST">
+                <form method="POST">
+                    <div class="row">
                     <input type="hidden" name="product_id" value="{{ product['id'] }}">
-                    <input type="number" name="quantity" value="1" min="1">
-                    <button type="button" class="add-to-cart-btn">Add to Cart</button>
+                        <div class="col">
+                        <input class="form-control" type="number" name="quantity" value="1" min="1">
+                        </div>
+                        <div class="col">
+                        <button class="btn btn-primary" type="button">Add to Cart</button>
+                        </div>
+                    </div>
                 </form>
 
             </div>

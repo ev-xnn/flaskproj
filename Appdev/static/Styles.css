@@ -385,6 +385,7 @@ p.error-message {
 }
 
 .card {
+    color: white;
     background: #222;
     width: 300px;
     align: center;
@@ -394,3 +395,12 @@ p.error-message {
     color: white
 }
 
+.staff-prod:hover {
+    transform: scale(1.05);
+}
+
+
+.card-bg {
+    color:white;
+    background:#222
+}
