@@ -3,6 +3,7 @@ from datetime import datetime
 import shelve
 import random
 import uuid
+import re
 
 
 app = Flask(__name__)
@@ -311,8 +312,9 @@ def add_to_cart():
 
 
 
-@app.route('/cart')
+@app.route('/cart', methods=['GET', 'POST'])
 def view_cart():
+    errors = {}
     with shelve.open('shop_data.db') as db:
         products = db['products']
         cart = db['cart']
@@ -331,7 +333,25 @@ def view_cart():
                     "total": subtotal,
                     "product_id": item['product_id']
                 })
-    return render_template('view_cart.html', cart=cart_details, total=total)
+    if request.method == 'POST':
+        if not request.form.get('cardnum'):
+            errors['cardnum'] = "Card Number is required."
+        elif not request.form.get('cardnum').isdigit() or not len(request.form.get('cardnum')) == 16:
+            errors['cardnum'] = "Invalid Card Number."
+        if not request.form.get('expiry'):
+            errors['expiry'] = "Expiry is required."
+        elif '/' not in request.form.get('expiry'):
+            errors['expiry'] = "Invalid Expiry."
+        elif not request.form.get('expiry').split('/')[0].isdigit() or request.form.get('expiry').split('/')[1].isdigit() or request.form.get('expiry').split('/')[0] not in range(1, 13) or request.form.get('expiry').split('/')[0] not in range(1,32):
+            errors['expiry'] = "Invalid Expiry."
+        if not request.form.get('cvv'):
+            errors['cvv'] = "CVV is required."
+        elif not request.form.get('cvv').isdigit() or not len(request.form.get('cvv')) == 16:
+            errors['cvv'] = "Invalid CVV."
+        if errors:
+            return render_template('view_cart.html', cart=cart_details, total=total, errors=errors)
+
+    return render_template('view_cart.html', cart=cart_details, total=total, errors=errors)
 
 
 @app.route('/checkout', methods=['GET', 'POST'])

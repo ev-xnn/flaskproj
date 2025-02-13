@@ -153,41 +153,6 @@ p.error-message {
             margin: 5px 0 0;
         }
 
-.add-to-cart-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.add-to-cart-form input[type='number'] {
-    width: 60px;
-    padding: 8px;
-    border: 1px solid #00aaff;
-    background: #333;
-    color: #fff;
-    border-radius: 5px;
-    text-align: center;
-}
-
-.add-to-cart-btn {
-    background: #00aaff;
-    border: none;
-    padding: 12px 20px;
-    font-size: 1rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    color: #fff;
-    cursor: pointer;
-    border-radius: 6px;
-    transition: background 0.3s, transform 0.2s;
-}
-
-.add-to-cart-btn:hover {
-    background: #0088cc;
-    transform: scale(1.05);
-}
 
 /* Cart Page Styling */
 .cart-container {
