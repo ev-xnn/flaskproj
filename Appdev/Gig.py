@@ -95,6 +95,12 @@ def delete_applicant(applicant_id):
     # Redirect to the view applicants page
     return redirect(url_for('view_applicants'))  # Redirect to the 'view_applicants' route
 
+@app.route('/applicants')
+def view_applicants():
+    with shelve.open('applicants.db') as db:
+        applicants = list(db.values())
+    return render_template('view_applicants.html', applicants=applicants, messages=get_flashed_messages())
+
 
 # Run the Flask application in debug mode when the script is executed directly
 if __name__ == '__main__':  # Check if the script is run directly
