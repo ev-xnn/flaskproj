@@ -1,41 +1,78 @@
 {% extends "base.html" %}
 {% block head %}
-<h1>Courses</h1>
+    <h1 class="text-start ms-3 my-4">Courses</h1> <!-- Left-aligned heading -->
 {% endblock %}
+
 {% block content %}
-    <div class="course">
-        <h2>Dancing</h2>
-        <p>Express emotions through movement and music.</p>
-        <a class="signup-btn" href="/signup">Sign Up</a>
+<div class="container mt-5">
+    <div class="row row-cols-1 row-cols-md-3 g-3"> <!-- Reduced gutter spacing -->
+
+        <!-- First Row -->
+        <div class="col">
+            <div class="card h-100 text-center shadow-lg d-flex flex-column">
+                <div class="card-body d-flex flex-column">
+                    <h2 class="card-title">Dancing</h2>
+                    <p class="card-text flex-grow-1">Express emotions through movement and music.</p>
+                    <a class="btn btn-primary mt-auto" href="/signup">Sign Up</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100 text-center shadow-lg d-flex flex-column">
+                <div class="card-body d-flex flex-column">
+                    <h2 class="card-title">Vocal Training</h2>
+                    <p class="card-text flex-grow-1">Enhance your vocal techniques and range.</p>
+                    <a class="btn btn-primary mt-auto" href="/signup">Sign Up</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100 text-center shadow-lg d-flex flex-column">
+                <div class="card-body d-flex flex-column">
+                    <h2 class="card-title">Song Writing</h2>
+                    <p class="card-text flex-grow-1">Learn the art of crafting lyrics and conveying emotions through music.</p>
+                    <a class="btn btn-primary mt-auto" href="/signup">Sign Up</a>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="course">
-        <h2>Vocal Training</h2>
-        <p>Enhance your vocal techniques and range.</p>
-        <a class="signup-btn" href="/signup">Sign Up</a>
-    </div>
+    <!-- Reduced Spacing Between Rows -->
+    <div class="py-3"></div> <!-- Adjusted for a smaller gap -->
 
-    <div class="course">
-        <h2>Song Writing</h2>
-        <p>Learn the art of crafting lyrics and conveying emotions through music.</p>
-        <a class="signup-btn" href="/signup">Sign Up</a>
-    </div>
+    <div class="row row-cols-1 row-cols-md-3 g-3"> <!-- Reduced gutter spacing -->
+        <!-- Second Row -->
+        <div class="col">
+            <div class="card h-100 text-center shadow-lg d-flex flex-column">
+                <div class="card-body d-flex flex-column">
+                    <h2 class="card-title">Stage Confidence</h2>
+                    <p class="card-text flex-grow-1">Overcome your nerves and perform confidently in front of large crowds.</p>
+                    <a class="btn btn-primary mt-auto" href="/signup">Sign Up</a>
+                </div>
+            </div>
+        </div>
 
-    <div class="course">
-        <h2>Stage Confidence</h2>
-        <p>Overcome your nerves and perform confidently in front of large crowds.</p>
-        <a class="signup-btn" href="/signup">Sign Up</a>
-    </div>
+        <div class="col">
+            <div class="card h-100 text-center shadow-lg d-flex flex-column">
+                <div class="card-body d-flex flex-column">
+                    <h2 class="card-title">Freestyle Techniques</h2>
+                    <p class="card-text flex-grow-1">Express creativity and adapt well to your environment through these techniques.</p>
+                    <a class="btn btn-primary mt-auto" href="/signup">Sign Up</a>
+                </div>
+            </div>
+        </div>
 
-    <div class="course">
-        <h2>Freestyle Techniques</h2>
-        <p>Express creativity and adapt well to your environment through these techniques.</p>
-        <a class="signup-btn" href="/signup">Sign Up</a>
+        <div class="col">
+            <div class="card h-100 text-center shadow-lg d-flex flex-column">
+                <div class="card-body d-flex flex-column">
+                    <h2 class="card-title">Branding/Marketing</h2>
+                    <p class="card-text flex-grow-1">Learn how to connect with audiences and build trust as an artist.</p>
+                    <a class="btn btn-primary mt-auto" href="/signup">Sign Up</a>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div class="course">
-        <h2>Branding/Marketing</h2>
-        <p>Learn how to connect with audiences and build trust as an artist.</p>
-        <a class="signup-btn" href="/signup">Sign Up</a>
-    </div>
+</div>
 {% endblock %}

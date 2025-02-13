@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
+from datetime import datetime
 import shelve
 import random
 import uuid
@@ -9,6 +10,30 @@ app.secret_key = 'supersecretkey'
 
 SHELVE_DB = "auditions.db"
 
+COUNTRIES = [
+    "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", "Austria",
+    "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan",
+    "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cabo Verde", "Cambodia",
+    "Cameroon", "Canada", "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros", "Congo (Congo-Brazzaville)", "Costa Rica",
+    "Croatia", "Cuba", "Cyprus", "Czechia (Czech Republic)", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "Ecuador", "Egypt",
+    "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Eswatini (fmr. 'Swaziland')", "Ethiopia", "Fiji", "Finland", "France", "Gabon",
+    "Gambia", "Georgia", "Germany", "Ghana", "Greece", "Grenada", "Guatemala", "Guinea", "Guinea-Bissau", "Guyana",
+    "Haiti", "Honduras", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel",
+    "Italy", "Jamaica", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kuwait", "Kyrgyzstan", "Laos",
+    "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Madagascar", "Malawi",
+    "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia", "Moldova",
+    "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique", "Myanmar (Burma)", "Namibia", "Nauru", "Nepal", "Netherlands",
+    "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Korea", "North Macedonia", "Norway", "Oman", "Pakistan", "Palau",
+    "Palestine", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal", "Qatar", "Romania",
+    "Russia", "Rwanda", "Saint Kitts & Nevis", "Saint Lucia", "Saint Vincent & Grenadines", "Samoa", "San Marino", "Sao Tome & Principe", "Saudi Arabia", "Senegal",
+    "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Korea",
+    "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", "Sweden", "Switzerland", "Syria", "Taiwan", "Tajikistan",
+    "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Tuvalu",
+    "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela",
+    "Vietnam", "Yemen", "Zambia", "Zimbabwe"
+]
+
+
 
 @app.route('/')
 def home():
@@ -17,61 +42,95 @@ def home():
 
 @app.route('/form', methods=['GET', 'POST'])
 def form_audition():
+    errors = {}
+
+    max_birth_date = datetime(datetime.today().year - 18, 12, 31).strftime("%Y-%m-%d")
+
     if request.method == 'POST':
-        errors = {}
-
-        # Validate Name (letters only)
-        if not request.form['name'].replace(" ", "").isalpha():
-            errors['name'] = "Only letters are allowed for Name."
-
-        # Validate Nationality (letters only)
-        if not request.form['nationality'].replace(" ", "").isalpha():
-            errors['nationality'] = "Only letters are allowed for Nationality."
-
-        # Validate Height (positive number)
         try:
-            height = float(request.form['height'])
-            if height <= 0:
-                errors['height'] = "Height must be a positive number greater than zero."
-        except ValueError:  # handle cases when the input is not a number
-            errors['height'] = "Height must be a number."
+            # Validate First Name (only letters)
+            if not request.form['first_name'].replace(" ", "").isalpha():
+                errors['first_name'] = "Only letters are allowed for First Name."
 
-        # Validate Weight (positive number)
-        try:
-            weight = float(request.form['weight'])
-            if weight <= 0:
-                errors['weight'] = "Weight must be a positive number greater than zero."
-        except ValueError:
-            errors['weight'] = "Weight must be a number."
+            # Validate Last Name (only letters)
+            if not request.form['last_name'].replace(" ", "").isalpha():
+                errors['last_name'] = "Only letters are allowed for Last Name."
 
-        # Validate SMS/Contact (must be digits and max 8 characters)
-        if not request.form['sms'].isdigit():
-            errors['sms'] = "Only numbers are allowed for Contact."
-        elif len(request.form['sms']) > 8:
-            errors['sms'] = "Contact number cannot exceed 8 digits."
+            # Validate Email
+            if '@' not in request.form['email'] or '.' not in request.form['email']:
+                errors['email'] = "Invalid email format."
 
-        # If there are errors, re-render the form with error messages
-        if errors:
-            return render_template('form_audition.html', errors=errors, entry=request.form)
+            # Validate Birth Date (Must be 2007 or earlier)
+            birth_date_str = request.form.get('birth_date', "").strip()
+            if not birth_date_str:
+                errors['birth_date'] = "Birth date is required."
+            else:
+                try:
+                    birth_date = datetime.strptime(birth_date_str, "%Y-%m-%d")
+                    if birth_date > datetime(datetime.today().year - 18, 12, 31):
+                        errors['birth_date'] = "You must be born on or before 31st Dec 2007 to apply."
+                except ValueError:
+                    errors['birth_date'] = "Invalid birth date format."
 
-        # Save data if no errors
-        with shelve.open(SHELVE_DB) as db:
-            new_id = str(len(db) + 1)
-            db[new_id] = {
-                'id': new_id,
-                'name': request.form['name'],
-                'email': request.form['email'],
-                'birth_date': request.form['birth_date'],
-                'nationality': request.form['nationality'],
-                'gender': request.form['gender'],
-                'height': request.form['height'],
-                'weight': request.form['weight'],
-                'sms': request.form['sms'],
-                'introduction': request.form['introduction']
-            }
-        return redirect(url_for('home'))
-    return render_template('form_audition.html')
+            # Validate Nationality (must be a valid country)
+            nationality = request.form.get('nationality', "")
+            if nationality not in COUNTRIES:
+                errors['nationality'] = "Please select a valid nationality."
 
+            # Validate Gender
+            if request.form['gender'] not in ['Male', 'Female', 'Other']:
+                errors['gender'] = "Invalid gender selection."
+
+            # Validate Height (positive number)
+            try:
+                height = float(request.form['height'])
+                if height <= 0:
+                    errors['height'] = "Height must be a positive number greater than zero."
+            except ValueError:
+                errors['height'] = "Height must be a valid number."
+
+            # Validate Weight (positive number)
+            try:
+                weight = float(request.form['weight'])
+                if weight <= 0:
+                    errors['weight'] = "Weight must be a positive number greater than zero."
+            except ValueError:
+                errors['weight'] = "Weight must be a valid number."
+
+            # Validate Contact (digits only, max 8 characters)
+            if not request.form['sms'].isdigit():
+                errors['sms'] = "Only numbers are allowed for Contact."
+            elif len(request.form['sms']) > 8:
+                errors['sms'] = "Contact number cannot exceed 8 digits."
+
+            # If there are errors, re-render the form with error messages
+            if errors:
+                return render_template('form_audition.html', errors=errors, entry=request.form, countries=COUNTRIES, max_birth_date=max_birth_date)
+
+            # Save data if no errors (Original Storage Structure)
+            with shelve.open(SHELVE_DB) as db:
+                new_id = str(len(db) + 1)
+                db[new_id] = {
+                    'id': new_id,
+                    'first_name': request.form['first_name'],
+                    'last_name': request.form['last_name'],
+                    'email': request.form['email'],
+                    'birth_date': birth_date_str,
+                    'nationality': request.form['nationality'],
+                    'gender': request.form['gender'],
+                    'height': request.form['height'],
+                    'weight': request.form['weight'],
+                    'sms': request.form['sms'],
+                    'introduction': request.form['introduction']
+                }
+
+            return redirect(url_for('confirm_audition'))
+
+        except Exception as e:
+            errors['unexpected'] = f"An error occurred: {e}"
+            return render_template('form_audition.html', errors=errors, entry=request.form, countries=COUNTRIES, max_birth_date=max_birth_date)
+
+    return render_template('form_audition.html', errors={}, entry=None, countries=COUNTRIES, max_birth_date=max_birth_date)
 
 @app.route('/terms')
 def terms_and_agreement():
@@ -540,19 +599,63 @@ def sign_up():
     """
     Sign-up form to register for a course.
     """
+    errors = {}
+
     if request.method == 'POST':
-        with shelve.open(APPLICANTS_DB) as db:
-            new_id = str(len(db) + 1)
-            db[new_id] = {
-                'id': new_id,
-                'name': request.form['name'],
-                'email': request.form['email'],
-                'age_group': request.form['age_group'],
-                'mobile': request.form['mobile'],
-                'course': request.form['course']
-            }
-        return redirect(url_for('view_applicants_courses'))
-    return render_template('signup.html')
+        try:
+            # Validate First Name (only letters)
+            if not request.form['first_name'].replace(" ", "").isalpha():
+                errors['first_name'] = "Only letters are allowed for First Name."
+
+            # Validate Last Name (only letters)
+            if not request.form['last_name'].replace(" ", "").isalpha():
+                errors['last_name'] = "Only letters are allowed for Last Name."
+
+            # Validate Email
+            if '@' not in request.form['email'] or '.' not in request.form['email']:
+                errors['email'] = "Invalid email format."
+
+            # Validate Age Group (must be a valid option)
+            if request.form['age_group'] not in ["Under 18", "18-25", "26-40", "41+"]:
+                errors['age_group'] = "Invalid age group selection."
+
+            # Validate Mobile (digits only, max 8 characters)
+            if not request.form['mobile'].isdigit():
+                errors['mobile'] = "Only numbers are allowed for Mobile."
+            elif len(request.form['mobile']) > 8:
+                errors['mobile'] = "Mobile number cannot exceed 8 digits."
+
+            # Validate Course (must be a valid option)
+            if request.form['course'] not in [
+                "Dancing", "Vocal Training", "Song Writing",
+                "Stage Confidence", "Freestyle Techniques", "Branding/Marketing"
+            ]:
+                errors['course'] = "Invalid course selection."
+
+            # If there are errors, re-render the form with error messages
+            if errors:
+                return render_template('signup.html', errors=errors, entry=request.form)
+
+            # Save data if no errors
+            with shelve.open(APPLICANTS_DB) as db:
+                new_id = str(len(db) + 1)
+                db[new_id] = {
+                    'id': new_id,
+                    'first_name': request.form['first_name'],
+                    'last_name': request.form['last_name'],
+                    'email': request.form['email'],
+                    'age_group': request.form['age_group'],
+                    'mobile': request.form['mobile'],
+                    'course': request.form['course']
+                }
+
+            return redirect(url_for('view_applicants_courses'))
+
+        except Exception as e:
+            errors['unexpected'] = f"An error occurred: {e}"
+            return render_template('signup.html', errors=errors, entry=request.form)
+
+    return render_template('signup.html', errors={}, entry=None)
 
 
 @app.route('/courses/applicants')
