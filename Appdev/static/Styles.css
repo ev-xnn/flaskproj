@@ -384,5 +384,11 @@ p.error-message {
     transform: scale(1.05);
 }
 
+.card {
+    background: #222;
+    width: 300px;
+    align: center;
+}
+
 
 

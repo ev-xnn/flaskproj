@@ -20,6 +20,7 @@
                     <li><a href="{{url_for('course_selection') }}">Courses</a></li>
                     <li><a href="{{url_for('competition') }}">Competition</a></li>
                     <li><a href="{{url_for('shop') }}">Shop</a></li>
+                    <li><a href="{{url_for('view_cart') }}">Cart</a></li>
                     {% if session['role'] == 'admin' %}
                     <li><a href="{{url_for('view_audition') }}">View Audition</a></li>
                     <li><a href="{{ url_for('view_applicants_courses') }}">View Course</a></li>
