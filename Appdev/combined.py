@@ -180,6 +180,10 @@ def delete_audition(applicant_id):
             return redirect(url_for('view_audition'))
     return "Applicant not found", 404
 
+@app.route('/confirm_audition')
+def confirm_audition():
+    return render_template('confirm_audition.html')
+
 
 def init_db(): #creates a db that looks like {'products': [], 'cart': [], 'users': {user: {'password': password, 'role': role}}}
 
