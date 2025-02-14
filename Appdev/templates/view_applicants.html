@@ -4,7 +4,7 @@
 {% endblock %}
 {% block content %}
         <!-- Table displaying applicant data -->
-        <table>
+        <table class="table table-striped table-bordered">
             <thead>
                 <tr>
                     <th>ID</th> <!-- Column for applicant ID -->
@@ -29,11 +29,11 @@
                     <td>{{ applicant['email'] }}</td> <!-- Display email -->
                     <td>{{ applicant['phone'] }}</td> <!-- Display phone number -->
                     <td class="actions"> <!-- Action buttons for edit and delete -->
-                        <a href="/edit/{{ applicant['id'] }}">
-                            <button class="edit-btn">Edit</button> <!-- Edit button -->
+                        <a href="/gigs/edit/{{ applicant['id'] }}">
+                            <button class="btn btn-primary">Edit</button> <!-- Edit button -->
                         </a>
-                        <a href="/delete/{{ applicant['id'] }}">
-                            <button class="delete-btn">Delete</button> <!-- Delete button -->
+                        <a href="/gigs/delete/{{ applicant['id'] }}">
+                            <button class="btn btn-danger">Delete</button> <!-- Delete button -->
                         </a>
                     </td>
                 </tr>
@@ -42,7 +42,7 @@
         </table>
         <!-- Navigation links below the table -->
         <div class="links">
-            <a href="/">Back to Home</a> | <!-- Link to go back to signup page -->
-            <a href="/about">About Us</a> <!-- Link to the about page -->
+            <a class="btn btn-primary" href="/">Back to Home</a> | <!-- Link to go back to signup page -->
+            <a class="btn btn-primary" href="/about">About Us</a> <!-- Link to the about page -->
         </div>
 {% endblock %}

@@ -5,7 +5,7 @@
 {% block content %}
         <!-- Form for user input -->
 <div class="container mt-5">
-        <form action="{{ url_for('edit_applicant', applicant_id=applicant['id']) if applicant else '/add' }}" method="POST">
+        <form action="{{ url_for('add_gig_applicant') if not applicant else url_for('edit_gig_applicant', applicant_id=applicant['id']) }}" method="POST">
             <!-- First Name field -->
             <div class="form-field">
                 <label class="form-label" for="first_name">First Name*</label>
