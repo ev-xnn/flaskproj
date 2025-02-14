@@ -3,20 +3,24 @@
 <h1>Edit Event</h1>
 {% endblock %}
 {% block content %}
-
+<main>
+<div class="container mt-5">
 <form method="POST">
-    <label>Event Name:</label>
-    <input type="text" name="event_name" value="{{ event.name }}" required>
+    <label class="form-label">Event Name:</label>
+    <input class="form-control" type="text" name="event_name" value="{{ event.name }}" required>
 
-    <label>Event Date:</label>
-    <input type="date" name="event_date" value="{{ event.event_date }}" required>
+    <label class="form-label">Event Date:</label>
+    <input class="form-control" type="date" name="event_date" value="{{ event.event_date }}" required>
 
-    <label>Start Time:</label>
-    <input type="time" name="start_time" value="{{ event.start_time }}" required>
+    <label class="form-label">Start Time:</label>
+    <input class="form-control" type="time" name="start_time" value="{{ event.start_time }}" required>
 
-    <label>End Time:</label>
-    <input type="time" name="end_time" value="{{ event.end_time }}" required>
-
-    <button type="submit">Save Changes</button>
+    <label class="form-label">End Time:</label>
+    <input class="form-control" type="time" name="end_time" value="{{ event.end_time }}" required>
+    <div class="display-4 text-center mb-6">
+    <button class="btn btn-primary" type="submit">Save Changes</button>
+    </div>
 </form>
+</div>
+</main>
 {% endblock %}

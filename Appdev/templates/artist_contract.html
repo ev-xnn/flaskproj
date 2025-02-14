@@ -3,20 +3,30 @@
 <h1>Contracts</h1>
 {% endblock %}
 {% block content %}
+<main>
+    <div class="container mt-5">
 <form method="POST">
-    <input type="text" name="contract_name" placeholder="Artist Name" required>
+    <label class="form-label" for="contract_name">Artist Name:</label>
+    <input class="form-control" id="contract_name" type="text" name="contract_name" placeholder="Artist Name" required>
     {% if errors.get('username') %}
     <p class="error-message">{{ errors['name'] }}</p>
     {% endif %}
-    <input type="email" name="email" placeholder="Email" required>
-    <input type="text" name="venue_location" placeholder="Venue Location" required>
-    <input type="text" name="country" placeholder="Country" required>
+    <label class="form-label" for="email">Email:</label>
+    <input class="form-control" id="email" type="email" name="email" placeholder="Email" required>
+    <label class="form-label" for="venue_location">Venue Location:</label>
+    <input class="form-control" id="venue_location" type="text" name="venue_location" placeholder="Venue Location" required>
+    <label class="form-label" for="country">Country:</label>
+    <input class="form-control" id="country" type="text" name="country" placeholder="Country" required>
     {% if errors.get('username') %}
     <p class="error-message">{{ errors['country'] }}</p>
     {% endif %}
-    <input type="text" name="phone_number" placeholder="Phone Number" required>
-    <button type="submit">Add Contract</button>
+    <label class="form-label" for="phone_number">Phone Number:</label>
+    <input class="form-control" id="phone_number" type="text" name="phone_number" placeholder="Phone Number" required>
+    <div class="display-4 text-center mb-6">
+    <button class="btn btn-primary" type="submit">Add Contract</button>
+    </div>
 </form>
+    </div>
 <ul>
     {% for contract in contracts %}
     <li>
@@ -28,4 +38,5 @@
     </li>
     {% endfor %}
 </ul>
+</main>
 {% endblock %}

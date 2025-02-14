@@ -29,7 +29,7 @@
                 <td>{{ applicant['weight'] }}</td>
                 <td>{{ applicant['sms'] if applicant['sms'] else 'No Contact Provided' }}</td>
                 <td>
-                    <a href="/edit/{{ applicant['id'] }}" class="edit">Edit</a>
+                    <a href="/edit/{{ applicant['id'] }}" class="btn btn-primary">Edit</a>
                     <form action="/delete/{{ applicant['id'] }}" method="POST" style="display:inline;">
                         <button class="btn btn-danger" type="submit" class="delete">Delete</button>
                     </form>

@@ -541,42 +541,6 @@ def delete_product():
 
 
 
-@app.route('/details', methods=['GET', 'POST'])
-def details():
-    if 'username' not in session or session.get('role') != 'admin':
-        flash("Access denied. Admins only.", "error")
-        return redirect(url_for('login'))
-    with shelve.open('shop_data.db') as db:
-        users = db['users']
-        if request.method == 'POST':
-            action = request.form.get('action')
-            username = request.form.get('username')
-
-            if action == 'create':
-                password = request.form.get('password')
-                role = request.form.get('role')
-                if username not in users:
-                    users[username] = {"password": password, "role": role}
-                else:
-                    return "User already exists!"
-
-            elif action == 'update':
-                if username in users:
-                    users[username]['password'] = request.form.get('password', users[username]['password'])
-                    users[username]['role'] = request.form.get('role', users[username]['role'])
-                else:
-                    return "User not found!"
-
-            elif action == 'delete':
-                if username in users:
-                    del users[username]
-                else:
-                    return "User not found!"
-
-            db['users'] = users
-
-        return render_template('details.html', users=users)
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     errors = {}

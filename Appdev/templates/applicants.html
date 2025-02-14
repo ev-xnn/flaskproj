@@ -21,9 +21,9 @@
                 <td>{{ applicant['email'] }}</td>
                 <td>{{ applicant['course'] }}</td>
                 <td>
-                    <a href="/applicant/edit/{{ applicant['id'] }}" class="edit">Edit</a>
+                    <a href="/applicant/edit/{{ applicant['id'] }}" class="btn btn-primary">Edit</a>
                     <form action="/applicant/delete/{{ applicant['id'] }}" method="POST" style="display:inline;">
-                        <button class="btn btn-danger" type="submit" class="delete">Delete</button>
+                        <button class="btn btn-danger" type="submit">Delete</button>
                     </form>
                 </td>
             </tr>

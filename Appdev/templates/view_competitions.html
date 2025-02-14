@@ -25,8 +25,8 @@
                     <td>{{ entry['email'] }}</td> <!-- Display email -->
                     <td>{{ entry['phone'] }}</td> <!-- Display phone number -->
                     <td class="actions"> <!-- Action links for edit and delete -->
-                        <a class="edit" href="/edit/{{ competition_type }}/{{ entry['id'] }}">Edit</a> <!-- Edit link -->
-                        <a class="delete" href="/delete/{{ competition_type }}/{{ entry['id'] }}">Delete</a> <!-- Delete link -->
+                        <a class="btn btn-primary" href="/edit/{{ competition_type }}/{{ entry['id'] }}">Edit</a> <!-- Edit link -->
+                        <a class="btn btn-danger" href="/delete/{{ competition_type }}/{{ entry['id'] }}">Delete</a> <!-- Delete link -->
                     </td>
                 </tr>
                 {% endfor %}
