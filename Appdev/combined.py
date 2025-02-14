@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
+from datetime import datetime
 import shelve
 import random
 import uuid
@@ -9,69 +10,132 @@ app.secret_key = 'supersecretkey'
 
 SHELVE_DB = "auditions.db"
 
+COUNTRIES = [
+    "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", "Austria",
+    "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan",
+    "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cabo Verde", "Cambodia",
+    "Cameroon", "Canada", "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros", "Congo (Congo-Brazzaville)", "Costa Rica",
+    "Croatia", "Cuba", "Cyprus", "Czechia (Czech Republic)", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "Ecuador", "Egypt",
+    "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Eswatini (fmr. 'Swaziland')", "Ethiopia", "Fiji", "Finland", "France", "Gabon",
+    "Gambia", "Georgia", "Germany", "Ghana", "Greece", "Grenada", "Guatemala", "Guinea", "Guinea-Bissau", "Guyana",
+    "Haiti", "Honduras", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel",
+    "Italy", "Jamaica", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kuwait", "Kyrgyzstan", "Laos",
+    "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Madagascar", "Malawi",
+    "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia", "Moldova",
+    "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique", "Myanmar (Burma)", "Namibia", "Nauru", "Nepal", "Netherlands",
+    "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Korea", "North Macedonia", "Norway", "Oman", "Pakistan", "Palau",
+    "Palestine", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal", "Qatar", "Romania",
+    "Russia", "Rwanda", "Saint Kitts & Nevis", "Saint Lucia", "Saint Vincent & Grenadines", "Samoa", "San Marino", "Sao Tome & Principe", "Saudi Arabia", "Senegal",
+    "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Korea",
+    "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", "Sweden", "Switzerland", "Syria", "Taiwan", "Tajikistan",
+    "Tanzania", "Thailand", "Timor-Leste", "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey", "Turkmenistan", "Tuvalu",
+    "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela",
+    "Vietnam", "Yemen", "Zambia", "Zimbabwe"
+]
+
+
 
 @app.route('/')
 def home():
     return render_template('index.html')
 
 
+@app.route('/contact')
+def contact():
+    return render_template('contact.html')
+
+
 @app.route('/form', methods=['GET', 'POST'])
 def form_audition():
+    errors = {}
+
+    max_birth_date = datetime(datetime.today().year - 18, 12, 31).strftime("%Y-%m-%d")
+
     if request.method == 'POST':
-        errors = {}
-
-        # Validate Name (letters only)
-        if not request.form['name'].replace(" ", "").isalpha():
-            errors['name'] = "Only letters are allowed for Name."
-
-        # Validate Nationality (letters only)
-        if not request.form['nationality'].replace(" ", "").isalpha():
-            errors['nationality'] = "Only letters are allowed for Nationality."
-
-        # Validate Height (positive number)
         try:
-            height = float(request.form['height'])
-            if height <= 0:
-                errors['height'] = "Height must be a positive number greater than zero."
-        except ValueError:  # handle cases when the input is not a number
-            errors['height'] = "Height must be a number."
+            # Validate First Name (only letters)
+            if not request.form['first_name'].replace(" ", "").isalpha():
+                errors['first_name'] = "Only letters are allowed for First Name."
 
-        # Validate Weight (positive number)
-        try:
-            weight = float(request.form['weight'])
-            if weight <= 0:
-                errors['weight'] = "Weight must be a positive number greater than zero."
-        except ValueError:
-            errors['weight'] = "Weight must be a number."
+            # Validate Last Name (only letters)
+            if not request.form['last_name'].replace(" ", "").isalpha():
+                errors['last_name'] = "Only letters are allowed for Last Name."
 
-        # Validate SMS/Contact (must be digits and max 8 characters)
-        if not request.form['sms'].isdigit():
-            errors['sms'] = "Only numbers are allowed for Contact."
-        elif len(request.form['sms']) > 8:
-            errors['sms'] = "Contact number cannot exceed 8 digits."
+            # Validate Email
+            if '@' not in request.form['email'] or '.' not in request.form['email']:
+                errors['email'] = "Invalid email format."
 
-        # If there are errors, re-render the form with error messages
-        if errors:
-            return render_template('form_audition.html', errors=errors, entry=request.form)
+            # Validate Birth Date (Must be 2007 or earlier)
+            birth_date_str = request.form.get('birth_date', "").strip()
+            if not birth_date_str:
+                errors['birth_date'] = "Birth date is required."
+            else:
+                try:
+                    birth_date = datetime.strptime(birth_date_str, "%Y-%m-%d")
+                    if birth_date > datetime(datetime.today().year - 18, 12, 31):
+                        errors['birth_date'] = "You must be born on or before 31st Dec 2007 to apply."
+                except ValueError:
+                    errors['birth_date'] = "Invalid birth date format."
 
-        # Save data if no errors
-        with shelve.open(SHELVE_DB) as db:
-            new_id = str(len(db) + 1)
-            db[new_id] = {
-                'id': new_id,
-                'name': request.form['name'],
-                'email': request.form['email'],
-                'birth_date': request.form['birth_date'],
-                'nationality': request.form['nationality'],
-                'gender': request.form['gender'],
-                'height': request.form['height'],
-                'weight': request.form['weight'],
-                'sms': request.form['sms'],
-                'introduction': request.form['introduction']
-            }
-        return redirect(url_for('home'))
-    return render_template('form_audition.html')
+            # Validate Nationality (must be a valid country)
+            nationality = request.form.get('nationality', "")
+            if nationality not in COUNTRIES:
+                errors['nationality'] = "Please select a valid nationality."
 
+            # Validate Gender
+            if request.form['gender'] not in ['Male', 'Female', 'Other']:
+                errors['gender'] = "Invalid gender selection."
+
+            # Validate Height (positive number)
+            try:
+                height = float(request.form['height'])
+                if height <= 0:
+                    errors['height'] = "Height must be a positive number greater than zero."
+            except ValueError:
+                errors['height'] = "Height must be a valid number."
+
+            # Validate Weight (positive number)
+            try:
+                weight = float(request.form['weight'])
+                if weight <= 0:
+                    errors['weight'] = "Weight must be a positive number greater than zero."
+            except ValueError:
+                errors['weight'] = "Weight must be a valid number."
+
+            # Validate Contact (digits only, max 8 characters)
+            if not request.form['sms'].isdigit():
+                errors['sms'] = "Only numbers are allowed for Contact."
+            elif len(request.   form['sms']) > 8:
+                errors['sms'] = "Contact number cannot exceed 8 digits."
+
+            # If there are errors, re-render the form with error messages
+            if errors:
+                return render_template('form_audition.html', errors=errors, entry=request.form, countries=COUNTRIES, max_birth_date=max_birth_date)
+
+            # Save data if no errors (Original Storage Structure)
+            with shelve.open(SHELVE_DB) as db:
+                new_id = str(len(db) + 1)
+                db[new_id] = {
+                    'id': new_id,
+                    'first_name': request.form['first_name'],
+                    'last_name': request.form['last_name'],
+                    'email': request.form['email'],
+                    'birth_date': birth_date_str,
+                    'nationality': request.form['nationality'],
+                    'gender': request.form['gender'],
+                    'height': request.form['height'],
+                    'weight': request.form['weight'],
+                    'sms': request.form['sms'],
+                    'introduction': request.form['introduction']
+                }
+
+            return redirect(url_for('confirm_audition'))
+
+        except Exception as e:
+            errors['unexpected'] = f"An error occurred: {e}"
+            return render_template('form_audition.html', errors=errors, entry=request.form, countries=COUNTRIES, max_birth_date=max_birth_date)
+
+    return render_template('form_audition.html', errors={}, entry=None, countries=COUNTRIES, max_birth_date=max_birth_date)
 
 @app.route('/terms')
 def terms_and_agreement():
@@ -115,6 +179,10 @@ def delete_audition(applicant_id):
             del db[applicant_id]
             return redirect(url_for('view_audition'))
     return "Applicant not found", 404
+
+@app.route('/confirm_audition')
+def confirm_audition():
+    return render_template('confirm_audition.html')
 
 
 def init_db(): #creates a db that looks like {'products': [], 'cart': [], 'users': {user: {'password': password, 'role': role}}}
@@ -252,8 +320,9 @@ def add_to_cart():
 
 
 
-@app.route('/cart')
+@app.route('/cart', methods=['GET', 'POST'])
 def view_cart():
+    errors = {}
     with shelve.open('shop_data.db') as db:
         products = db['products']
         cart = db['cart']
@@ -272,7 +341,25 @@ def view_cart():
                     "total": subtotal,
                     "product_id": item['product_id']
                 })
-    return render_template('view_cart.html', cart=cart_details, total=total)
+    if request.method == 'POST':
+        if not request.form.get('cardnum'):
+            errors['cardnum'] = "Card Number is required."
+        elif not request.form.get('cardnum').isdigit() or not len(request.form.get('cardnum')) == 16:
+            errors['cardnum'] = "Invalid Card Number."
+        if not request.form.get('expiry'):
+            errors['expiry'] = "Expiry is required."
+        elif '/' not in request.form.get('expiry'):
+            errors['expiry'] = "Invalid Expiry."
+        elif not request.form.get('expiry').split('/')[0].isdigit() or request.form.get('expiry').split('/')[1].isdigit() or request.form.get('expiry').split('/')[0] not in range(1, 13) or request.form.get('expiry').split('/')[0] not in range(1,32):
+            errors['expiry'] = "Invalid Expiry."
+        if not request.form.get('cvv'):
+            errors['cvv'] = "CVV is required."
+        elif not request.form.get('cvv').isdigit() or not len(request.form.get('cvv')) == 16:
+            errors['cvv'] = "Invalid CVV."
+        if errors:
+            return render_template('view_cart.html', cart=cart_details, total=total, errors=errors)
+
+    return render_template('view_cart.html', cart=cart_details, total=total, errors=errors)
 
 
 @app.route('/checkout', methods=['GET', 'POST'])
@@ -369,7 +456,7 @@ def staff():
     with shelve.open('shop_data.db') as db:
         products = db['products']
         users = db['users']
-        if request.method == 'POST':
+        if request.method == 'POST' and request.form.get('action') == 'add-product':
             product_name = request.form.get('product_name')
             product_price = round(float(request.form.get('product_price')))
             product_image = request.form.get('product_image')
@@ -386,79 +473,11 @@ def staff():
             db['products'] = products
 
 
-            if request.method == 'POST':
-                action = request.form.get('action')
-                username = request.form.get('username')
-
-                if action == 'create':
-                    password = request.form.get('password')
-                    role = request.form.get('role')
-                    if username not in users:
-                        users[username] = {"password": password, "role": role}
-                    else:
-                        return "User already exists!"
-
-                elif action == 'update':
-                    if username in users:
-                        users[username]['password'] = request.form.get('password', users[username]['password'])
-                        users[username]['role'] = request.form.get('role', users[username]['role'])
-                    else:
-                        return "User not found!"
-
-                elif action == 'delete':
-                    if username in users:
-                        del users[username]
-                    else:
-                        return "User not found!"
-
-                db['users'] = users
-
-    return render_template('staff.html', products=products, users=users)
-
-
-
-@app.route('/update-product', methods=['POST'])
-def update_product():
-    product_id = int(request.form.get('product_id'))
-    product_name = request.form.get('product_name')
-    product_price = float(request.form.get('product_price'))
-    product_image = request.form.get('product_image')
-
-    with shelve.open('shop_data.db') as db:
-        products = db['products']
-        for product in products:
-            if product['id'] == product_id:
-                product['name'] = product_name
-                product['price'] = product_price
-                product['image'] = product_image
-                break
-        db['products'] = products
-    return redirect(url_for('staff'))
-
-
-@app.route('/delete-product', methods=['POST'])
-def delete_product():
-    product_id = int(request.form.get('product_id'))
-
-    with shelve.open('shop_data.db') as db:
-        products = db['products']
-        products = [product for product in products if product['id'] != product_id]
-        db['products'] = products
-    return redirect(url_for('staff'))
-
-
-@app.route('/details', methods=['GET', 'POST'])
-def details():
-    if 'username' not in session or session.get('role') != 'admin':
-        flash("Access denied. Admins only.", "error")
-        return redirect(url_for('login'))
-    with shelve.open('shop_data.db') as db:
-        users = db['users']
         if request.method == 'POST':
             action = request.form.get('action')
             username = request.form.get('username')
 
-            if action == 'create':
+            if action == 'create-user':
                 password = request.form.get('password')
                 role = request.form.get('role')
                 if username not in users:
@@ -466,14 +485,14 @@ def details():
                 else:
                     return "User already exists!"
 
-            elif action == 'update':
+            elif action == 'update-user':
                 if username in users:
                     users[username]['password'] = request.form.get('password', users[username]['password'])
                     users[username]['role'] = request.form.get('role', users[username]['role'])
                 else:
                     return "User not found!"
 
-            elif action == 'delete':
+            elif action == 'delete-user':
                 if username in users:
                     del users[username]
                 else:
@@ -481,7 +500,55 @@ def details():
 
             db['users'] = users
 
-        return render_template('details.html', users=users)
+    return render_template('staff.html', products=products, users=users)
+
+
+
+@app.route('/update-product', methods=['POST'])
+def update_product():
+    if request.form.get('action') == 'update-product':
+
+        product_id = int(request.form.get('product_id'))
+        product_name = request.form.get('product_name')
+        product_price = float(request.form.get('product_price'))
+        product_image = request.form.get('product_image')
+        product_description = request.form.get('product_description')
+
+        with shelve.open('shop_data.db') as db:
+            products = db['products']
+            for product in products:
+                if product['id'] == product_id:
+                    product['name'] = product_name
+                    product['price'] = product_price
+                    product['image'] = product_image
+                    product['description'] = product_description
+                    break
+            db['products'] = products
+    return redirect(url_for('staff'))
+
+
+@app.route('/delete-product', methods=['POST'])
+def delete_product():
+    if request.form.get('action') == 'delete-product':
+        product_id = int(request.form.get('product_id'))
+
+        with shelve.open('shop_data.db', writeback=True) as db:
+            if 'products' not in db:
+                db['products'] = []
+                return redirect(url_for('staff'))
+
+            products = db['products']
+            product_exists = any(product['id'] == product_id for product in products)
+
+            if not product_exists:
+                return redirect(url_for('staff'))
+
+            updated_products = [product for product in products if product['id'] != product_id]
+            db['products'] = updated_products
+
+    return redirect(url_for('staff'))
+
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -524,19 +591,63 @@ def sign_up():
     """
     Sign-up form to register for a course.
     """
+    errors = {}
+
     if request.method == 'POST':
-        with shelve.open(APPLICANTS_DB) as db:
-            new_id = str(len(db) + 1)
-            db[new_id] = {
-                'id': new_id,
-                'name': request.form['name'],
-                'email': request.form['email'],
-                'age_group': request.form['age_group'],
-                'mobile': request.form['mobile'],
-                'course': request.form['course']
-            }
-        return redirect(url_for('view_applicants_courses'))
-    return render_template('signup.html')
+        try:
+            # Validate First Name (only letters)
+            if not request.form['first_name'].replace(" ", "").isalpha():
+                errors['first_name'] = "Only letters are allowed for First Name."
+
+            # Validate Last Name (only letters)
+            if not request.form['last_name'].replace(" ", "").isalpha():
+                errors['last_name'] = "Only letters are allowed for Last Name."
+
+            # Validate Email
+            if '@' not in request.form['email'] or '.' not in request.form['email']:
+                errors['email'] = "Invalid email format."
+
+            # Validate Age Group (must be a valid option)
+            if request.form['age_group'] not in ["Under 18", "18-25", "26-40", "41+"]:
+                errors['age_group'] = "Invalid age group selection."
+
+            # Validate Mobile (digits only, max 8 characters)
+            if not request.form['mobile'].isdigit():
+                errors['mobile'] = "Only numbers are allowed for Mobile."
+            elif len(request.form['mobile']) > 8:
+                errors['mobile'] = "Mobile number cannot exceed 8 digits."
+
+            # Validate Course (must be a valid option)
+            if request.form['course'] not in [
+                "Dancing", "Vocal Training", "Song Writing",
+                "Stage Confidence", "Freestyle Techniques", "Branding/Marketing"
+            ]:
+                errors['course'] = "Invalid course selection."
+
+            # If there are errors, re-render the form with error messages
+            if errors:
+                return render_template('signup.html', errors=errors, entry=request.form)
+
+            # Save data if no errors
+            with shelve.open(APPLICANTS_DB) as db:
+                new_id = str(len(db) + 1)
+                db[new_id] = {
+                    'id': new_id,
+                    'first_name': request.form['first_name'],
+                    'last_name': request.form['last_name'],
+                    'email': request.form['email'],
+                    'age_group': request.form['age_group'],
+                    'mobile': request.form['mobile'],
+                    'course': request.form['course']
+                }
+
+            return redirect(url_for('view_applicants_courses'))
+
+        except Exception as e:
+            errors['unexpected'] = f"An error occurred: {e}"
+            return render_template('signup.html', errors=errors, entry=request.form)
+
+    return render_template('signup.html', errors={}, entry=None)
 
 
 @app.route('/courses/applicants')
@@ -793,7 +904,7 @@ def about_competitions():
 
 @app.route('/artist_contract', methods=['GET', 'POST'])
 def artist_contract():
-    with shelve.open('app_data') as db:
+    with shelve.open('app_data.db') as db:
         if 'contracts' not in db:
             db['contracts'] = []
 
@@ -830,7 +941,7 @@ def artist_contract():
 
 @app.route('/artist_contract/delete/<int:id>')
 def delete_artist_contract(id):
-    with shelve.open('app_data') as db:
+    with shelve.open('app_data.db') as db:
         if 'contracts' in db:
             contracts = db['contracts']
             contracts = [c for c in contracts if c['id'] != id]
@@ -841,7 +952,7 @@ def delete_artist_contract(id):
 
 @app.route('/artist_contract/edit/<int:id>', methods=['GET', 'POST'])
 def edit_artist_contract(id):
-    with shelve.open('app_data') as db:
+    with shelve.open('app_data.db') as db:
         if 'contracts' in db:
             contracts = db['contracts']
 
@@ -861,7 +972,7 @@ def edit_artist_contract(id):
 
 @app.route('/live_calendar', methods=['GET', 'POST'])
 def live_calendar():
-    with shelve.open('app_data') as db:
+    with shelve.open('app_data.db') as db:
         if 'events' not in db:
             db['events'] = []
 
@@ -890,7 +1001,7 @@ def live_calendar():
 
 @app.route('/live_calendar/delete/<int:id>')
 def delete_live_calendar_event(id):
-    with shelve.open('app_data') as db:
+    with shelve.open('app_data.db') as db:
         if 'events' in db:
             events = db['events']
             events = [e for e in events if e['id'] != id]
@@ -901,7 +1012,7 @@ def delete_live_calendar_event(id):
 
 @app.route('/live_calendar/edit/<int:id>', methods=['GET', 'POST'])
 def edit_live_calendar_event(id):
-    with shelve.open('app_data') as db:
+    with shelve.open('app_data.db') as db:
         if 'events' in db:
             events = db['events']
             event = next((e for e in events if e['id'] == id), None)
@@ -916,6 +1027,84 @@ def edit_live_calendar_event(id):
                 return redirect(url_for('live_calendar'))
 
     return render_template('edit_event.html', event=event)
+
+
+@app.route('/gig_signup')  # Define a route for the gig signup form
+def gig():
+    # Render the gig signup form template with no pre-filled applicant data
+    return render_template('gig_signup.html', applicant=None)  # Pass `None` to ensure no pre-filled data
+
+# Define a route to add a new applicant, accepting only POST requests
+@app.route('/gigs/add', methods=['POST'])
+def add_gig_applicant():
+    with shelve.open('gig.db', writeback=True) as db:
+        applicant_id = str(uuid.uuid4())
+        db[applicant_id] = {
+            'id': applicant_id,
+            'first_name': request.form['first_name'],
+            'last_name': request.form['last_name'],
+            'birth_date': request.form['birth_date'],
+            'gender': request.form['gender'],
+            'email': request.form['email'],
+            'username': request.form['username'],
+            'phone': request.form['phone'],
+            'city': request.form['city'],
+            'state': request.form['state'],
+            'zip': request.form['zip'],
+            'country': request.form['country']
+        }
+    flash('Application added successfully!')
+    return redirect(url_for('view_gig_applicants'))
+
+
+# Define a route to view all applicants
+@app.route('/gigs/applicants')  # Define a route to display all applicants
+def view_gig_applicants():
+    with shelve.open('gig.db') as db:  # Open the shelve database in read mode
+        # Retrieve all applicants as a list of values
+        applicants = list(db.values())  # Convert the shelve database values into a list
+    # Render the template to display all applicants, passing the applicant list
+    return render_template('view_applicants.html', applicants=applicants)  # Pass the list of applicants to the template
+
+# Define a route to edit an applicant's data, accepting both GET and POST requests
+@app.route('/gigs/edit/<applicant_id>', methods=['GET', 'POST'])  # Define a route to edit an applicant by ID
+def edit_gig_applicant(applicant_id):
+    with shelve.open('gig.db', writeback=True) as db:  # Open the shelve database in writeback mode
+        # Retrieve the applicant data by ID
+        applicant = db['id']  # Fetch the specific applicant record
+        if request.method == 'POST':  # Check if the form was submitted via POST
+            # Update the applicant data with the new form values
+            applicant.update({  # Use the form data to update the applicant record
+                'first_name': request.form['first_name'],  # Update the first name
+                'last_name': request.form['last_name'],  # Update the last name
+                'birth_date': request.form['birth_date'],  # Update the birth date
+                'gender': request.form['gender'],  # Update the gender
+                'email': request.form['email'],  # Update the email address
+                'username': request.form['username'],  # Update the username
+                'phone': request.form['phone'],  # Update the phone number
+                'city': request.form['city'],  # Update the city
+                'state': request.form['state'],  # Update the state
+                'zip': request.form['zip'],  # Update the zip code
+                'country': request.form['country']  # Update the country
+            })
+            # Display a success message
+            flash('Application updated successfully!')  # Notify the user that the update was successful
+            # Redirect to the view applicants page
+            return redirect(url_for('view_gig_applicants'))  # Redirect to the 'view_applicants' route
+    # Render the gig signup form template with the current applicant data pre-filled
+    return render_template('gig_signup.html', applicant=applicant)  # Pre-fill the form with existing data
+
+# Define a route to delete an applicant by ID
+@app.route('/gigs/delete/<applicant_id>', methods=['GET', 'POST'])  # Define a route to delete an applicant
+def delete_gig_applicant(applicant_id):
+    with shelve.open('gig.db', writeback=True) as db:  # Open the shelve database in writeback mode
+        # Delete the applicant data from the database
+        del db[applicant_id]  # Remove the record corresponding to the given ID
+    # Display a success message
+    flash('Application deleted successfully!')  # Notify the user that the record was deleted
+    # Redirect to the view applicants page
+    return redirect(url_for('view_gig_applicants'))  # Redirect to the 'view_applicants' route
+
 
 
 if __name__ == '__main__':

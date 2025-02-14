@@ -5,53 +5,104 @@
 {% block content %}
 <div class="container mt-5">
     <form action="/form" method="POST" enctype="multipart/form-data">
-        <label for="name" class="form-label">Name:</label>
+
+        <!-- Name input field -->
+        <label for="first_name" class="form-label">First Name:</label>
         <div class="display-4 text-center mb-6">
-        <input type="text" class="form-control" id="name" name="name" required>
+            <input type="text" class="form-control" id="first_name" name="first_name" value="{{ entry['first_name'] if entry else '' }}" required>
         </div>
+        {% if errors.get('first_name') %}<p class="error-message">{{ errors['first_name'] }}</p>{% endif %}
+
+        <label for="last_name" class="form-label">Last Name:</label>
+        <div class="display-4 text-center mb-6">
+            <input type="text" class="form-control" id="last_name" name="last_name" value="{{ entry['last_name'] if entry else '' }}" required>
+        </div>
+        {% if errors.get('last_name') %}<p class="error-message">{{ errors['last_name'] }}</p>{% endif %}
+
+        <!-- Email input field -->
         <label for="email" class="form-label">Email:</label>
         <div class="display-4 text-center mb-6">
-        <input type="email" class="form-control" id="email" name="email" required>
+            <input type="email" class="form-control" id="email" name="email" value="{{ entry['email'] if entry else '' }}" required>
         </div>
+        {% if errors.get('email') %}<p class="error-message">{{ errors['email'] }}</p>{% endif %}
+
+        <!-- Birth Date input field -->
         <label for="birth_date" class="form-label">Birth Date:</label>
         <div class="display-4 text-center mb-6">
-        <input type="date" class="form-control" id="birth_date" name="birth_date" required>
+            <input type="date" class="form-control" id="birth_date" name="birth_date" value="{{ entry['birth_date'] if entry else '' }}" required max="{{ max_birth_date }}">
         </div>
+        {% if errors.get('birth_date') %}<p class="error-message">{{ errors['birth_date'] }}</p>{% endif %}
+
+        <!-- Nationality dropdown field -->
         <label for="nationality" class="form-label">Nationality:</label>
         <div class="display-4 text-center mb-6">
-        <input type="text" class="form-control" id="nationality" name="nationality" required>
+            <select id="nationality" name="nationality" class="form-control" required>
+                <option value="">Select Nationality</option>
+                {% for country in countries %}
+                    <option value="{{ country }}" {% if entry and entry['nationality'] == country %}selected{% endif %}>{{ country }}</option>
+                {% endfor %}
+            </select>
         </div>
+        {% if errors.get('nationality') %}<p class="error-message">{{ errors['nationality'] }}</p>{% endif %}
+
+        <!-- Gender selection field -->
         <label for="gender" class="form-label">Gender:</label>
         <div class="display-4 text-center mb-6">
-        <select id="gender" name="gender" class="form-control">
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-        </select>
+            <select id="gender" name="gender" class="form-control">
+                <option value="">Select</option>
+                <option value="Male" {% if entry and entry['gender'] == 'Male' %}selected{% endif %}>Male</option>
+                <option value="Female" {% if entry and entry['gender'] == 'Female' %}selected{% endif %}>Female</option>
+                <option value="Other" {% if entry and entry['gender'] == 'Other' %}selected{% endif %}>Other</option>
+            </select>
         </div>
+        {% if errors.get('gender') %}<p class="error-message">{{ errors['gender'] }}</p>{% endif %}
+
+        <!-- Height input field -->
         <label for="height" class="form-label">Height (cm):</label>
         <div class="display-4 text-center mb-6">
-        <input type="number" class="form-control" id="height" name="height">
+            <input type="number" class="form-control" id="height" name="height" value="{{ entry['height'] if entry else '' }}">
         </div>
+        {% if errors.get('height') %}<p class="error-message">{{ errors['height'] }}</p>{% endif %}
+
+        <!-- Weight input field -->
         <label for="weight" class="form-label">Weight (kg):</label>
         <div class="display-4 text-center mb-6">
-        <input type="number" class="form-control" id="weight" name="weight">
+            <input type="number" class="form-control" id="weight" name="weight" value="{{ entry['weight'] if entry else '' }}">
         </div>
+        {% if errors.get('weight') %}<p class="error-message">{{ errors['weight'] }}</p>{% endif %}
+
+        <!-- Contact (SMS) input field -->
         <label for="sms" class="form-label">SMS/Contact:</label>
         <div class="display-4 text-center mb-6">
-        <input type="text" class="form-control" id="sms" name="sms">
+            <input type="text" class="form-control" id="sms" name="sms" value="{{ entry['sms'] if entry else '' }}">
         </div>
+        {% if errors.get('sms') %}<p class="error-message">{{ errors['sms'] }}</p>{% endif %}
+
+        <!-- Introduction text area field -->
         <label for="introduction" class="form-label">Introduction:</label>
         <div class="display-4 text-center mb-6">
-        <textarea class="form-control" rows="5" id="introduction" name="introduction"></textarea>
+            <textarea class="form-control" rows="5" id="introduction" name="introduction">{{ entry['introduction'] if entry else '' }}</textarea>
         </div>
+
+        <!-- File upload field -->
         <label for="file" class="form-label">Upload Video/Sound:</label>
         <div class="display-4 text-center mb-6">
-        <input type="file" class="form-control" id="file" name="file" accept="video/*,audio/*">
+            <input type="file" class="form-control" id="file" name="file" accept="video/*,audio/*">
         </div>
-        <p>By clicking the <strong>Submit</strong> button, you agree to our <a href="/terms" target="_blank">Terms and Agreement</a>.</p>
+
+        <!-- Terms and Agreement -->
+        <p>By clicking the <strong>Submit</strong> button, you agree to our
+            <a href="/terms" target="_blank" style="text-decoration: underline; color: blue;">
+                Terms and Agreement
+            </a>.
+        </p>
+
+        <!-- Submit button -->
         <div class="display-4 text-center mb-6">
-        <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
         </div>
+
     </form>
 </div>
+
 {% endblock %}
