@@ -311,8 +311,9 @@ def add_to_cart():
 
 
 
-@app.route('/cart')
+@app.route('/cart', methods=['GET', 'POST'])
 def view_cart():
+    errors = {}
     with shelve.open('shop_data.db') as db:
         products = db['products']
         cart = db['cart']
@@ -331,7 +332,25 @@ def view_cart():
                     "total": subtotal,
                     "product_id": item['product_id']
                 })
-    return render_template('view_cart.html', cart=cart_details, total=total)
+    if request.method == 'POST':
+        if not request.form.get('cardnum'):
+            errors['cardnum'] = "Card Number is required."
+        elif not request.form.get('cardnum').isdigit() or not len(request.form.get('cardnum')) == 16:
+            errors['cardnum'] = "Invalid Card Number."
+        if not request.form.get('expiry'):
+            errors['expiry'] = "Expiry is required."
+        elif '/' not in request.form.get('expiry'):
+            errors['expiry'] = "Invalid Expiry."
+        elif not request.form.get('expiry').split('/')[0].isdigit() or request.form.get('expiry').split('/')[1].isdigit() or request.form.get('expiry').split('/')[0] not in range(1, 13) or request.form.get('expiry').split('/')[0] not in range(1,32):
+            errors['expiry'] = "Invalid Expiry."
+        if not request.form.get('cvv'):
+            errors['cvv'] = "CVV is required."
+        elif not request.form.get('cvv').isdigit() or not len(request.form.get('cvv')) == 16:
+            errors['cvv'] = "Invalid CVV."
+        if errors:
+            return render_template('view_cart.html', cart=cart_details, total=total, errors=errors)
+
+    return render_template('view_cart.html', cart=cart_details, total=total, errors=errors)
 
 
 @app.route('/checkout', methods=['GET', 'POST'])
@@ -521,42 +540,6 @@ def delete_product():
     return redirect(url_for('staff'))
 
 
-
-@app.route('/details', methods=['GET', 'POST'])
-def details():
-    if 'username' not in session or session.get('role') != 'admin':
-        flash("Access denied. Admins only.", "error")
-        return redirect(url_for('login'))
-    with shelve.open('shop_data.db') as db:
-        users = db['users']
-        if request.method == 'POST':
-            action = request.form.get('action')
-            username = request.form.get('username')
-
-            if action == 'create':
-                password = request.form.get('password')
-                role = request.form.get('role')
-                if username not in users:
-                    users[username] = {"password": password, "role": role}
-                else:
-                    return "User already exists!"
-
-            elif action == 'update':
-                if username in users:
-                    users[username]['password'] = request.form.get('password', users[username]['password'])
-                    users[username]['role'] = request.form.get('role', users[username]['role'])
-                else:
-                    return "User not found!"
-
-            elif action == 'delete':
-                if username in users:
-                    del users[username]
-                else:
-                    return "User not found!"
-
-            db['users'] = users
-
-        return render_template('details.html', users=users)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -1035,6 +1018,92 @@ def edit_live_calendar_event(id):
                 return redirect(url_for('live_calendar'))
 
     return render_template('edit_event.html', event=event)
+
+
+@app.route('/gig_signup')  # Define a route for the gig signup form
+def gig():
+    # Render the gig signup form template with no pre-filled applicant data
+    return render_template('gig_signup.html', applicant=None)  # Pass `None` to ensure no pre-filled data
+
+# Define a route to add a new applicant, accepting only POST requests
+@app.route('/add', methods=['POST'])  # Define a POST route for adding applicants
+def add_applicant():
+    with shelve.open('applicants.db', writeback=True) as db:  # Open the shelve database in writeback mode
+        # Generate a unique ID for the applicant
+        applicant_id = str(uuid.uuid4())  # Create a unique identifier for the applicant
+        # Save the applicant data to the database
+        db[applicant_id] = {  # Store applicant details in a dictionary
+            'id': applicant_id,  # Save the unique ID
+            'first_name': request.form['first_name'],  # Get the first name from the form
+            'last_name': request.form['last_name'],  # Get the last name from the form
+            'birth_date': request.form['birth_date'],  # Get the birth date from the form
+            'gender': request.form['gender'],  # Get the gender from the form
+            'email': request.form['email'],  # Get the email address from the form
+            'username': request.form['username'],  # Get the username from the form
+            'phone': request.form['phone'],  # Get the phone number from the form
+            'city': request.form['city'],  # Get the city from the form
+            'state': request.form['state'],  # Get the state from the form
+            'zip': request.form['zip'],  # Get the zip code from the form
+            'country': request.form['country']  # Get the country from the form
+        }
+    # Display a success message
+    flash('Application added successfully!')  # Notify the user that the application was added
+    # Redirect to the view applicants page
+    return redirect(url_for('view_applicants'))  # Redirect to the 'view_applicants' route
+
+# Define a route to view all applicants
+@app.route('/applicants')  # Define a route to display all applicants
+def view_applicants():
+    with shelve.open('applicants.db') as db:  # Open the shelve database in read mode
+        # Retrieve all applicants as a list of values
+        applicants = list(db.values())  # Convert the shelve database values into a list
+    # Render the template to display all applicants, passing the applicant list
+    return render_template('view_applicants.html', applicants=applicants)  # Pass the list of applicants to the template
+
+# Define a route to edit an applicant's data, accepting both GET and POST requests
+@app.route('/gigs/edit/<applicant_id>', methods=['GET', 'POST'])  # Define a route to edit an applicant by ID
+def edit_gigs_applicant(applicant_id):
+    with shelve.open('applicants.db', writeback=True) as db:  # Open the shelve database in writeback mode
+        # Retrieve the applicant data by ID
+        applicant = db[applicant_id]  # Fetch the specific applicant record
+        if request.method == 'POST':  # Check if the form was submitted via POST
+            # Update the applicant data with the new form values
+            applicant.update({  # Use the form data to update the applicant record
+                'first_name': request.form['first_name'],  # Update the first name
+                'last_name': request.form['last_name'],  # Update the last name
+                'birth_date': request.form['birth_date'],  # Update the birth date
+                'gender': request.form['gender'],  # Update the gender
+                'email': request.form['email'],  # Update the email address
+                'username': request.form['username'],  # Update the username
+                'phone': request.form['phone'],  # Update the phone number
+                'city': request.form['city'],  # Update the city
+                'state': request.form['state'],  # Update the state
+                'zip': request.form['zip'],  # Update the zip code
+                'country': request.form['country']  # Update the country
+            })
+            # Display a success message
+            flash('Application updated successfully!')  # Notify the user that the update was successful
+            # Redirect to the view applicants page
+            return redirect(url_for('view_applicants'))  # Redirect to the 'view_applicants' route
+    # Render the gig signup form template with the current applicant data pre-filled
+    return render_template('gig_signup.html', applicant=applicant)  # Pre-fill the form with existing data
+
+# Define a route to delete an applicant by ID
+@app.route('/gigs/delete/<applicant_id>')  # Define a route to delete an applicant
+def delete_gigs_applicant(applicant_id):
+    with shelve.open('applicants.db', writeback=True) as db:  # Open the shelve database in writeback mode
+        # Delete the applicant data from the database
+        del db[applicant_id]  # Remove the record corresponding to the given ID
+    # Display a success message
+    flash('Application deleted successfully!')  # Notify the user that the record was deleted
+    # Redirect to the view applicants page
+    return redirect(url_for('view_applicants'))  # Redirect to the 'view_applicants' route
+
+@app.route('/gigs/applicants')
+def view_gigs_applicants():
+    with shelve.open('applicants.db') as db:
+        applicants = list(db.values())
+    return render_template('view_applicants.html', applicants=applicants)
 
 
 if __name__ == '__main__':

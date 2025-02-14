@@ -3,43 +3,35 @@
 <h1>Applicants</h1>
 {% endblock %}
 {% block content %}
-    <nav>
-            <ul>
-                <li><a href="{{ url_for('home') }}" class="active">Home</a></li>
-                <li><a href="{{ url_for('sustainability') }}">Sustainability</a></li>
-                <li><a href="{{url_for('form_audition') }}">Audition</a></li>
-                <li><a href="{{url_for('course_selection') }}">Courses</a></li>
-                <li><a href="{{url_for('competition') }}">Competition</a></li>
-                <li><a href="{{url_for('shop') }}">Shop</a></li>
-                <li><a href="{{ url_for('login') }}">Login</a></li>
-                <li><a href="{{ url_for('logout') }}">Logout</a></li>
-            </ul>
-        </nav>
-    <h1>Edit Applicant Information</h1>
+<main>
+    <div class="container mt-5">
     <form action="/applicant/edit/{{ applicant['id'] }}" method="POST">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" value="{{ applicant['name'] }}" required>
+        <label class="form-label" for="name">Name:</label>
+        <input class="form-control" type="text" id="name" name="name" value="{{ applicant['name'] }}" required>
 
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" value="{{ applicant['email'] }}" required>
+        <label class="form-label" for="email">Email:</label>
+        <input class="form-control" type="email" id="email" name="email" value="{{ applicant['email'] }}" required>
 
-        <label for="age_group">Age Group:</label>
-        <select id="age_group" name="age_group">
+        <label class="form-label" for="age_group">Age Group:</label>
+        <select class="form-control" id="age_group" name="age_group">
             <option value="Under 18" {% if applicant['age_group'] == "Under 18" %}selected{% endif %}>Under 18</option>
             <option value="18-25" {% if applicant['age_group'] == "18-25" %}selected{% endif %}>18-25</option>
             <option value="26-40" {% if applicant['age_group'] == "26-40" %}selected{% endif %}>26-40</option>
             <option value="41+" {% if applicant['age_group'] == "41+" %}selected{% endif %}>41+</option>
         </select>
 
-        <label for="mobile">Mobile:</label>
-        <input type="text" id="mobile" name="mobile" value="{{ applicant['mobile'] }}" required>
+        <label class="form-label" for="mobile">Mobile:</label>
+        <input class="form-control" type="text" id="mobile" name="mobile" value="{{ applicant['mobile'] }}" required>
 
-        <label for="course">Course:</label>
-        <select id="course" name="course">
+        <label class="form-label" for="course">Course:</label>
+        <select class="form-control" id="course" name="course">
             <option value="Dancing" {% if applicant['course'] == "Dancing" %}selected{% endif %}>Dancing</option>
             <option value="Vocal Training" {% if applicant['course'] == "Vocal Training" %}selected{% endif %}>Vocal Training</option>
         </select>
-
-        <button type="submit">Save Changes</button>
+        <div class="display-4 text-center mb-6">
+        <button class="btn btn-primary" type="submit">Save Changes</button>
+        </div>
     </form>
+    </div>
+</main>
 {% endblock %}

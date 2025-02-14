@@ -9,9 +9,9 @@
         <!-- Cart Items Section -->
         <div class="col-md-8">
             {% if cart %}
-                <div class="list-group">
+                <div class="list-group bg-dark text-light border-0 shadow-lg rounded">
                     {% for item in cart %}
-                        <div class="list-group-item card-bg d-flex justify-content-between align-items-center py-3">
+                        <div class="list-group-item bg-dark text-light border-secondary d-flex justify-content-between align-items-center py-3">
                             <div class="d-flex align-items-center">
                                 <img src="{{ item['image'] }}" alt="{{ item['name'] }}" class="rounded me-3" style="width: 80px; height: 80px; object-fit: cover;">
                                 <div>
@@ -21,14 +21,11 @@
                                 </div>
                             </div>
                             <div class="d-flex gap-3">
-                                <!-- Update Quantity Form -->
                                 <form action="/update-cart" method="POST" class="d-flex align-items-center">
                                     <input type="hidden" name="product_id" value="{{ item['product_id'] }}">
                                     <input type="number" name="quantity" value="{{ item['quantity'] }}" min="1" class="form-control form-control-sm bg-dark text-light border-secondary me-2" style="width: 60px;">
                                     <button class="btn btn-sm btn-primary">Update</button>
                                 </form>
-
-                                <!-- Remove Item Form -->
                                 <form action="/delete-from-cart" method="POST">
                                     <input type="hidden" name="product_id" value="{{ item['product_id'] }}">
                                     <button class="btn btn-sm btn-danger">Remove</button>
@@ -44,7 +41,7 @@
 
         <!-- Order Summary Section -->
         <div class="col-md-4">
-            <div class="card">
+            <div class="card bg-dark text-light border-0 shadow-lg">
                 <div class="card-body">
                     <h4 class="card-title text-center">Order Summary</h4>
                     <hr>
@@ -62,14 +59,105 @@
                         <strong>${{ total }}</strong>
                     </div>
                     <hr>
-                    <!-- Checkout Button -->
-                    <form action="/checkout" method="POST">
-                        <button class="btn btn-lg btn-primary w-100">Proceed to Checkout</button>
-                    </form>
+                    <!-- Checkout Button with Payment Modal -->
+                    <button type="button" class="btn btn-lg btn-primary w-100 launch" data-bs-toggle="modal" data-bs-target="#paymentModal">
+                        <i class="fa fa-rocket"></i> Pay Now
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 </main>
+
+<!-- Payment Modal -->
+<div class="modal fade" id="paymentModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-3 rounded-4 shadow-lg bg-dark text-light">
+
+            <!-- Header with Close Button -->
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Payment Options</h5>
+                <ul class="nav nav-tabs border-0 d-flex justify-content-between mb-3" id="myTab" role="tablist" style="border-bottom: 2px solid #007bff;">
+                    <li class="nav-item w-50 text-center">
+                        <a class="nav-link active fw-bold text-light" id="visa-tab" data-bs-toggle="tab" href="#visa" role="tab" aria-controls="visa" aria-selected="true">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" width="80">
+                        </a>
+                    </li>
+                    <li class="nav-item w-50 text-center">
+                        <a class="nav-link fw-bold text-light" id="paypal-tab" data-bs-toggle="tab" href="#paypal" role="tab" aria-controls="paypal" aria-selected="false">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" width="80">
+                        </a>
+                    </li>
+                </ul>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <!-- Payment Tabs -->
+
+
+                <div class="tab-content" id="myTabContent">
+                    <!-- Credit Card Tab -->
+                    <div class="tab-pane fade show active" id="visa" role="tabpanel" aria-labelledby="visa-tab">
+                        <div class="text-center">
+                            <h5 class="fw-bold">Credit Card</h5>
+                        </div>
+                        <div class="form mt-3">
+                            <form method="POST">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Cardholder Name</label>
+                                <input type="text" id="cardname" name="cardname" class="form-control rounded-3 shadow-sm bg-dark text-light" required>
+                            </div>
+                            <div class="mb-3 position-relative">
+                                <label class="form-label fw-semibold">Card Number</label>
+                                <input type="text" id="cardnum" name="cardnum" class="form-control rounded-3 shadow-sm bg-dark text-light" required>
+                                {% if errors.get('cardnum') %}
+                                <p class="error-message">{{ errors['cardnum'] }}</p>
+                                {% endif %}
+                                <i class="fa fa-eye position-absolute end-0 top-50 translate-middle-y me-3 text-muted" style="cursor: pointer;"></i>
+                            </div>
+                            <div class="d-flex gap-3">
+                                <div class="mb-3 w-50">
+                                    <label class="form-label fw-semibold">Expiration Date</label>
+                                    <input type="text" id="expiry" name="expiry" class="form-control rounded-3 shadow-sm bg-dark text-light" required>
+                                    {% if errors.get('expiry') %}
+                                    <p class="error-message">{{ errors['expiry'] }}</p>
+                                    {% endif %}
+                                </div>
+                                <div class="mb-3 w-50">
+                                    <label class="form-label fw-semibold">CVV</label>
+                                    <input type="text" id="cvv" name="cvv" class="form-control rounded-3 shadow-sm bg-dark text-light" required>
+                                    {% if errors.get('cvv') %}
+                                    <p class="error-message">{{ errors['cvv'] }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="text-center mt-4">
+                                <button class="btn btn-success w-100 rounded-3 py-2 fw-bold">Add Card</button>
+                            </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- PayPal Tab -->
+                    <div class="tab-pane fade" id="paypal" role="tabpanel" aria-labelledby="paypal-tab">
+                        <div class="text-center mt-4">
+                            <h5 class="fw-bold">PayPal Payment</h5>
+                        </div>
+                        <div class="px-4 mt-3">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">PayPal Email Address</label>
+                                <input type="email" class="form-control rounded-3 shadow-sm bg-dark text-light" required>
+                            </div>
+                            <div class="text-center mt-4">
+                                <button class="btn btn-primary w-100 rounded-3 py-2 fw-bold">Add PayPal</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

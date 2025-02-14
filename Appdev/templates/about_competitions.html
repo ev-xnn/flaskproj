@@ -1,29 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <!-- Specify the document type and language as English -->
-    <!-- Set character encoding to UTF-8 for proper text display -->
-    <meta charset="UTF-8">
-    <!-- Ensure responsive design for different screen sizes -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Set the title of the web page -->
-    <title>About Competitions</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-</head>
-<body>
-    <nav>
-            <ul>
-                <li><a href="{{ url_for('home') }}" class="active">Home</a></li>
-                <li><a href="{{ url_for('sustainability') }}">Sustainability</a></li>
-                <li><a href="{{url_for('form_audition') }}">Audition</a></li>
-                <li><a href="{{url_for('course_selection') }}">Courses</a></li>
-                <li><a href="{{url_for('competition') }}">Competition</a></li>
-                <li><a href="{{url_for('shop') }}">Shop</a></li>
-                <li><a href="{{ url_for('login') }}">Login</a></li>
-                <li><a href="{{ url_for('logout') }}">Logout</a></li>
-            </ul>
-        </nav>
+{% extends "base.html" %}
+{% block head %}
+<h1>Applicants</h1>
+{% endblock %}
+{% block content %}
     <!-- Main container for the content -->
+<main>
     <div class="container">
         <!-- Main heading of the page -->
         <h1>About Competitions</h1>
@@ -49,5 +30,5 @@
         <!-- Back link to navigate to the facilitate page -->
         <a href="/" class="back-link">Back to Home</a> <!-- Link to go back to the homepage -->
     </div>
-</body>
-</html>
+</main>
+{% endblock %}

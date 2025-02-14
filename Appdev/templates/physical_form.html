@@ -4,32 +4,33 @@
 {% endblock %}
 {% block content %}
         <!-- Form for user input -->
-        <form action="" method="POST">
+        <div class="container mt-5">
+        <form action="" method="POST" enctype="multipart/form-data">
             <!-- First name field -->
             <div>
-                <label for="first_name">First Name*</label>
-                <input type="text" id="first_name" name="first_name" value="{{ entry['first_name'] if entry else '' }}" required>
+                <label class="form-label" for="first_name">First Name*</label>
+                <input class="form-control" type="text" id="first_name" name="first_name" value="{{ entry['first_name'] if entry else '' }}" required>
                 {% if errors.get('first_name') %}
                 <p class="error-message">{{ errors['first_name'] }}</p>
                 {% endif %}
             </div>
             <!-- Last name field -->
             <div>
-                <label for="last_name">Last Name*</label>
-                <input type="text" id="last_name" name="last_name" value="{{ entry['last_name'] if entry else '' }}" required>
+                <label class="form-label" for="last_name">Last Name*</label>
+                <input class="form-control" type="text" id="last_name" name="last_name" value="{{ entry['last_name'] if entry else '' }}" required>
                 {% if errors.get('last_name') %}
                 <p class="error-message">{{ errors['last_name'] }}</p>
                 {% endif %}
             </div>
             <!-- Birth date field -->
             <div>
-                <label for="birth_date">Birth Date*</label>
-                <input type="date" id="birth_date" name="birth_date" value="{{ entry['birth_date'] if entry else '' }}" required>
+                <label class="form-label" for="birth_date">Birth Date*</label>
+                <input class="form-control" type="date" id="birth_date" name="birth_date" value="{{ entry['birth_date'] if entry else '' }}" required>
             </div>
             <!-- Gender dropdown -->
             <div>
-                <label for="gender">Gender*</label>
-                <select id="gender" name="gender" required>
+                <label class="form-label" for="gender">Gender*</label>
+                <select class="form-control" id="gender" name="gender" required>
                     <option value="">Select</option>
                     <option value="Male" {% if entry and entry['gender'] == 'Male' %}selected{% endif %}>Male</option>
                     <option value="Female" {% if entry and entry['gender'] == 'Female' %}selected{% endif %}>Female</option>
@@ -38,44 +39,44 @@
             </div>
             <!-- Email field -->
             <div>
-                <label for="email">Email*</label>
-                <input type="email" id="email" name="email" value="{{ entry['email'] if entry else '' }}" required>
+                <label class="form-label" for="email">Email*</label>
+                <input class="form-control" type="email" id="email" name="email" value="{{ entry['email'] if entry else '' }}" required>
             </div>
             <!-- Phone number field -->
             <div>
-                <label for="phone">Phone*</label>
-                <input type="tel" id="phone" name="phone" value="{{ entry['phone'] if entry else '' }}" required>
+                <label class="form-label" for="phone">Phone*</label>
+                <input class="form-control" type="tel" id="phone" name="phone" value="{{ entry['phone'] if entry else '' }}" required>
                 {% if errors.get('phone') %}
                 <p class="error-message">{{ errors['phone'] }}</p>
                 {% endif %}
             </div>
             <!-- Address field (full width) -->
             <div class="full-width">
-                <label for="address">Address</label>
-                <input type="text" id="address" name="address" value="{{ entry['address'] if entry else '' }}">
+                <label class="form-label" for="address">Address</label>
+                <input class="form-control" type="text" id="address" name="address" value="{{ entry['address'] if entry else '' }}">
             </div>
             <!-- City field -->
             <div>
-                <label for="city">City*</label>
-                <input type="text" id="city" name="city" value="{{ entry['city'] if entry else '' }}" required>
+                <label class="form-label" for="city">City*</label>
+                <input class="form-control" type="text" id="city" name="city" value="{{ entry['city'] if entry else '' }}" required>
             </div>
             <!-- State field -->
             <div>
-                <label for="state">State</label>
-                <input type="text" id="state" name="state" value="{{ entry['state'] if entry else '' }}">
+                <label class="form-label" for="state">State</label>
+                <input class="form-control" type="text" id="state" name="state" value="{{ entry['state'] if entry else '' }}">
             </div>
             <!-- ZIP field -->
             <div>
-                <label for="zip">ZIP*</label>
-                <input type="text" id="zip" name="zip" value="{{ entry['zip'] if entry else '' }}" required>
+                <label class="form-label" for="zip">ZIP*</label>
+                <input class="form-control" type="text" id="zip" name="zip" value="{{ entry['zip'] if entry else '' }}" required>
                 {% if errors.get('zip') %}
                 <p class="error-message">{{ errors['zip'] }}</p>
                 {% endif %}
             </div>
             <!-- Country dropdown -->
             <div>
-                <label for="country">Country*</label>
-                <select id="country" name="country" required>
+                <label class="form-label" for="country">Country*</label>
+                <select class="form-control" id="country" name="country" required>
                     <option value="">Select Country</option>
                     <option value="Singapore" {% if entry and entry['country'] == 'Singapore' %}selected{% endif %}>Singapore</option>
                     <option value="Canada" {% if entry and entry['country'] == 'Canada' %}selected{% endif %}>Canada</option>
@@ -83,8 +84,8 @@
                 </select>
             </div>
             <!-- Submit button -->
-            <div class="full-width">
-                <button type="submit">
+            <div class="display-4 text-center mb-6">
+                <button class="btn btn-primary" type="submit">
                     {% if entry %}
                         Update
                     {% else %}
@@ -93,4 +94,5 @@
                 </button>
             </div>
         </form>
+        </div>
 {% endblock %}
