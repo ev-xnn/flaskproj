@@ -904,7 +904,7 @@ def about_competitions():
 
 @app.route('/artist_contract', methods=['GET', 'POST'])
 def artist_contract():
-    with shelve.open('app_data') as db:
+    with shelve.open('app_data.db') as db:
         if 'contracts' not in db:
             db['contracts'] = []
 
@@ -941,7 +941,7 @@ def artist_contract():
 
 @app.route('/artist_contract/delete/<int:id>')
 def delete_artist_contract(id):
-    with shelve.open('app_data') as db:
+    with shelve.open('app_data.db') as db:
         if 'contracts' in db:
             contracts = db['contracts']
             contracts = [c for c in contracts if c['id'] != id]
@@ -952,7 +952,7 @@ def delete_artist_contract(id):
 
 @app.route('/artist_contract/edit/<int:id>', methods=['GET', 'POST'])
 def edit_artist_contract(id):
-    with shelve.open('app_data') as db:
+    with shelve.open('app_data.db') as db:
         if 'contracts' in db:
             contracts = db['contracts']
 
@@ -972,7 +972,7 @@ def edit_artist_contract(id):
 
 @app.route('/live_calendar', methods=['GET', 'POST'])
 def live_calendar():
-    with shelve.open('app_data') as db:
+    with shelve.open('app_data.db') as db:
         if 'events' not in db:
             db['events'] = []
 
@@ -1001,7 +1001,7 @@ def live_calendar():
 
 @app.route('/live_calendar/delete/<int:id>')
 def delete_live_calendar_event(id):
-    with shelve.open('app_data') as db:
+    with shelve.open('app_data.db') as db:
         if 'events' in db:
             events = db['events']
             events = [e for e in events if e['id'] != id]
@@ -1012,7 +1012,7 @@ def delete_live_calendar_event(id):
 
 @app.route('/live_calendar/edit/<int:id>', methods=['GET', 'POST'])
 def edit_live_calendar_event(id):
-    with shelve.open('app_data') as db:
+    with shelve.open('app_data.db') as db:
         if 'events' in db:
             events = db['events']
             event = next((e for e in events if e['id'] == id), None)
